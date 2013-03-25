@@ -1,0 +1,3 @@
+interface LogMessageType {
+	LogMessage getNextMessage();
+}
