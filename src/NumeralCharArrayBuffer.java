@@ -5,8 +5,8 @@ final class NumeralCharArrayBuffer {
 		for (int i = 0; i < MAX_LENGTH; i++)
 			ZEROS_SOURCE_ARRAY[i] = '0';
 	}
-	private final char[] buffer = new char[MAX_LENGTH];
 	private static final char NEGATIVE_SIGN = '-';
+	private final char[] buffer = new char[MAX_LENGTH];
     private int length;
 
     public NumeralCharArrayBuffer() {
