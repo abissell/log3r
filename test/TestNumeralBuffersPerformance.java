@@ -6,22 +6,26 @@ import org.junit.Test;
 public class TestNumeralBuffersPerformance extends AbstractBenchmark {
 	private static final int TESTS_PER_ITER = 500000;
 	private static final int NUM_ITER = 1000;
-	private static final int[] RANDOM_INTS = new int[TESTS_PER_ITER];
-	private static int RESULT = 0;
+	private static final int[] randomInts = new int[TESTS_PER_ITER];
+	private static final double[] randomDoubles = new double[TESTS_PER_ITER];
+	private static long result = 0;
+	private static long[] results = new long[10];
+	private static int testIndex = -1;
 
 	public TestNumeralBuffersPerformance() {
-
+		testIndex++;
 	}
 
 	@BeforeClass
 	public static void setup() {
 		System.out.println("starting tests");
 		fillRandomSignedInts();
+		fillRandomDoubles();
 	}
 
 	private static void fillRandomSignedInts() {
 		for (int i = 0; i < TESTS_PER_ITER; i++) {
-			RANDOM_INTS[i] = getRandomInt(30);
+			randomInts[i] = getRandomInt(11);
 		}
 	}
 
@@ -33,30 +37,51 @@ public class TestNumeralBuffersPerformance extends AbstractBenchmark {
 			return random;
 	}
 
-	@Test
+	private static void fillRandomDoubles() {
+		for (int i = 0; i < TESTS_PER_ITER; i++) {
+			randomDoubles[i] = TestUtils.randomDouble();
+		}
+	}
+
 	public void testLessThanOrEqualZeroEval() {
 		for (int i = 0; i < NUM_ITER; i++) {
 			for (int j = 0; j < TESTS_PER_ITER; j++) {
-				final boolean addToResult = RANDOM_INTS[j] <= 0;
+				final boolean addToResult = randomInts[j] <= 0;
 				if (addToResult)
-					RESULT++;
+					result++;
+			}
+		}
+	}
+
+	public void testEqualZeroEval() {
+		for (int i = 0; i < NUM_ITER; i++) {
+			for (int j = 0; j < TESTS_PER_ITER; j++) {
+				final boolean addToResult = randomInts[j] == 0;
+				if (addToResult)
+					result++;
 			}
 		}
 	}
 
 	@Test
-	public void testEqualZeroEval() {
+	public void testDoubleToDoublePowersOfTen() { // Confirmed faster than raising to long powers
 		for (int i = 0; i < NUM_ITER; i++) {
 			for (int j = 0; j < TESTS_PER_ITER; j++) {
-				final boolean addToResult = RANDOM_INTS[j] == 0;
-				if (addToResult)
-					RESULT++;
+				try {
+					final double result = Log3rAppendUtils.raiseToPowerOfTen(randomDoubles[j], randomInts[j]);
+					results[testIndex] = results[testIndex] + Double.doubleToLongBits(result);
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}
 			}
 		}
 	}
 
 	@AfterClass
 	public static void printResultToPreventOptimization() {
-		System.out.println("tests finished, RESULT=" + RESULT);
+		System.out.println("tests finished, result=" + result);
+		for (int i = 0; i <= testIndex; i++) {
+			System.out.println("tests finished, result[" + i + "] = " + results[i]);
+		}
 	}
 }

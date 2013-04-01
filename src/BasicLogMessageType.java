@@ -1,8 +1,6 @@
-import net.jcip.annotations.ThreadSafe;
+import com.lmax.disruptor.Sequence;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-@ThreadSafe
+// Thread Safe
 enum BasicLogMessageType implements LogMessageType {
 	ARRAY(SettingDefaults.getPerfLogQueueSize()) {
 		final LogMessage constructNewLogMessage() {
@@ -16,31 +14,28 @@ enum BasicLogMessageType implements LogMessageType {
 		}
 	};
 
-	private final int queueSize;
-	private final AtomicInteger msgIdx = new AtomicInteger(0);
+	private final int indexMask;
+	private static final long INITIAL_CURSOR_VALUE = -1L;
+	private final Sequence sequence = new Sequence(INITIAL_CURSOR_VALUE);
 	private final LogMessage[] messages;
 
 	private BasicLogMessageType(final int queueSize) {
-		if (! Log3rUtils.isPowerOfTwo(queueSize))
+		if (! Log3rAppendUtils.isPowerOfTwo(queueSize))
 			throw new IllegalArgumentException("queueSize must be power of 2!");
 
-		this.queueSize = queueSize;
-		this.messages = new LogMessage[this.queueSize];
+		this.indexMask = queueSize - 1;
+		this.messages = new LogMessage[queueSize];
 	}
 
 	abstract LogMessage constructNewLogMessage();
 
 	public final LogMessage getNextMessage() {
-		int idx = msgIdx.getAndIncrement();
-		if (idx == Integer.MAX_VALUE)
-			msgIdx.set(0);
-
-		idx = idx % queueSize;
-		LogMessage message = messages[idx];
-		if (message == null)
-		{
+		long idx = sequence.incrementAndGet();
+		idx = idx & indexMask;
+		LogMessage message = messages[(int) idx];
+		if (message == null) {
 			message = constructNewLogMessage();
-			messages[idx] = message;
+			messages[(int) idx] = message;
 		}
 		message.reset();
 		return message;

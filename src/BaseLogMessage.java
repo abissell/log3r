@@ -1,6 +1,4 @@
-import net.jcip.annotations.NotThreadSafe;
-
-@NotThreadSafe
+// Not Thread Safe
 abstract class BaseLogMessage implements LogMessage {
 	char[] array;
 	int msgLength;

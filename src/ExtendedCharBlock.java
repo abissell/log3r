@@ -10,13 +10,11 @@ public enum ExtendedCharBlock implements CharBlock {
 
 	private final char[] array;
 	private final CharBuffer buffer;
-	private final String str;
 
 	private ExtendedCharBlock(final String str) {
 		this.array = str.toCharArray();
-		// TODO: Wrap with unmodifiable decorator
-		this.buffer = CharBuffer.wrap(this.array);
-		this.str = str;
+		final CharBuffer wrapBuffer = CharBuffer.wrap(this.array);
+		this.buffer = wrapBuffer.asReadOnlyBuffer();
 	}
 
 	public final char[] array() {
@@ -25,9 +23,5 @@ public enum ExtendedCharBlock implements CharBlock {
 
 	public final CharBuffer buffer() {
 		return buffer;
-	}
-
-	public final String getStr() {
-		return str;
 	}
 }

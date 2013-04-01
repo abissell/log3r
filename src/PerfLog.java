@@ -77,7 +77,7 @@ public enum PerfLog {
             final char[] charArr = message.data;
             final int length = message.length;
             final byte[] bytes = getByteBuf();
-            Log3rUtils.charArrayToByteArray(length, charArr, bytes);
+            Log3rAppendUtils.charArrayToByteArray(length, charArr, bytes);
             final LogTarget logTarget = message.target;
             try
             {

@@ -1,9 +1,8 @@
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 
 import java.nio.CharBuffer;
 
-@NotThreadSafe
+// Not Thread Safe
 class BasicArrayLogMessage extends BaseLogMessage implements CharArrayLogMessage {
     private static final Logger log = Logger.getLogger(BasicArrayLogMessage.class);
     
@@ -17,6 +16,7 @@ class BasicArrayLogMessage extends BaseLogMessage implements CharArrayLogMessage
 //			append(block.buffer());
 //		}
 //	}
+
 	public final LogMessage append(final LogMessage msg) {
 		try
 		{
@@ -60,8 +60,9 @@ class BasicArrayLogMessage extends BaseLogMessage implements CharArrayLogMessage
 	public LogMessage append(final char[] srcArray, final int from, final int to) {
 		try {
 			final int priorMsgLength = msgLength;
-			msgLength += (to - from);
-			System.arraycopy(srcArray, from, array, priorMsgLength, (to - from));
+			final int appendedLength = to - from;
+			msgLength += appendedLength;
+			System.arraycopy(srcArray, from, array, priorMsgLength, appendedLength);
 		}
 		catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -72,8 +73,18 @@ class BasicArrayLogMessage extends BaseLogMessage implements CharArrayLogMessage
 	public LogMessage append(final CharBuffer srcBuffer) {
 		try
 		{
-			for (int i = 0; i < srcBuffer.length(); i++) {
-				append(srcBuffer.get(i));
+			if (! srcBuffer.isReadOnly()) {
+				final char[] srcArray = srcBuffer.array();
+				final int srcPosition = srcBuffer.position();
+				final int srcLength = srcBuffer.length();
+				final int appendedLength = srcLength - srcPosition;
+				final int priorMsgLength = msgLength;
+				msgLength += appendedLength;
+				System.arraycopy(srcArray, srcPosition, array, priorMsgLength, appendedLength);
+			} else {
+				for (int i = 0; i < srcBuffer.length(); i++) {
+					append(srcBuffer.get(i));
+				}
 			}
 		}
 		catch (Exception e)

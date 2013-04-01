@@ -57,7 +57,7 @@ final class NumeralCharArrayBuffer {
 	private int copyUnsignedDigits(int i, IntegerSign sign) {
 		int idx = MAX_LENGTH - 1;
 		do {
-			buffer[idx--] = Log3rUtils.getChar(i % 10);
+			buffer[idx--] = Log3rAppendUtils.getChar(i % 10);
 			i /= 10;
 		} while (i > 0);
 

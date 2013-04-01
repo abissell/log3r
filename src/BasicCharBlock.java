@@ -1,8 +1,6 @@
-import net.jcip.annotations.ThreadSafe;
-
 import java.nio.CharBuffer;
 
-@ThreadSafe
+// Thread Safe
 public enum BasicCharBlock implements CharBlock {
 
     ATSYMBOL(" @ "),
@@ -18,14 +16,12 @@ public enum BasicCharBlock implements CharBlock {
     TIMES(" * ");
 
 	private final char[] array;
-	// TODO: Wrap with unmodifiable decorator
 	private final CharBuffer buffer;
-	private final String str;
 
     private BasicCharBlock(final String str) {
         this.array = str.toCharArray();
-		this.buffer = CharBuffer.wrap(this.array);
-		this.str = str;
+		final CharBuffer wrapBuffer = CharBuffer.wrap(this.array);
+		this.buffer = wrapBuffer.asReadOnlyBuffer();
     }
 
 	public final char[] array() {
@@ -35,8 +31,4 @@ public enum BasicCharBlock implements CharBlock {
 	public final CharBuffer buffer() {
         return buffer;
     }
-
-	public final String getStr() {
-		return str;
-	}
 }

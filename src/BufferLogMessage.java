@@ -1,11 +1,10 @@
-import net.jcip.annotations.NotThreadSafe;
 import org.apache.log4j.Logger;
 
 import java.nio.CharBuffer;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-@NotThreadSafe
+// Not Thread Safe
 final class BufferLogMessage extends BasicArrayLogMessage implements CharBufferLogMessage {
     private static final Logger log = Logger.getLogger(BufferLogMessage.class);
 	private final LongCharBuffer longCharBuffer = new LongCharBuffer();
@@ -92,7 +91,7 @@ final class BufferLogMessage extends BasicArrayLogMessage implements CharBufferL
 	public final LogMessage appendMillisecondTimestamp(final long msTime) {
 		try
 		{
-			msgLength += Log3rUtils.dateToBuffer(msTime, c, intCharBuffer, buffer);
+			msgLength += Log3rAppendUtils.dateToBuffer(msTime, c, intCharBuffer, buffer);
 		}
 		catch (Exception e)
 		{
@@ -104,7 +103,7 @@ final class BufferLogMessage extends BasicArrayLogMessage implements CharBufferL
 	public final LogMessage append(final int i) {
 		try
 		{
-			Log3rUtils.intToCharBuffer(intCharBuffer, i);
+			Log3rAppendUtils.intToCharBuffer(intCharBuffer, i);
 			msgLength += intCharBuffer.copyToBufferAndReset(buffer);
 		}
 		catch (Exception e)
@@ -117,7 +116,7 @@ final class BufferLogMessage extends BasicArrayLogMessage implements CharBufferL
 	public final LogMessage append(final long l) {
 		try
 		{
-			Log3rUtils.longToCharBuffer(longCharBuffer, l);
+			Log3rAppendUtils.longToCharBuffer(longCharBuffer, l);
 			msgLength += longCharBuffer.copyToBufferAndReset(buffer);
 		}
 		catch (Exception e)
@@ -130,7 +129,7 @@ final class BufferLogMessage extends BasicArrayLogMessage implements CharBufferL
 	public final LogMessage append(final double d) {
 		try
 		{
-			Log3rUtils.doubleToCharBuffer(doubleCharBuffer, d);
+			Log3rAppendUtils.doubleToCharBuffer(doubleCharBuffer, d);
 			msgLength += doubleCharBuffer.copyToBufferAndReset(buffer);
 		}
 		catch (Exception e) {
@@ -144,7 +143,7 @@ final class BufferLogMessage extends BasicArrayLogMessage implements CharBufferL
         /*
         try
         {
-            Log3rUtils.doubleToCharBuffer(doubleCharBuffer, d, precision);
+            Log3rAppendUtils.doubleToCharBuffer(doubleCharBuffer, d, precision);
             msgLength += doubleCharBuffer.copyToBufferAndReset(buffer);
         }
         catch (Exception e) {

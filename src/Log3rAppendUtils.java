@@ -5,20 +5,37 @@ import java.nio.CharBuffer;
 import java.text.ParseException;
 import java.util.*;
 
-// Enum Singleton
-enum Log3rUtils {
-    @SuppressWarnings("UnusedDeclaration")
-	INSTANCE;
+enum Log3rAppendUtils {
+	@SuppressWarnings("UnusedDeclaration") INSTANCE; // Enum singleton
 
-	private static final Logger log = Logger.getLogger(Log3rUtils.class);
-
-	private static final int UNLIMITED_PRECISION = -1;
+	private static final Logger log = Logger.getLogger(Log3rAppendUtils.class);
 
 	private static final int CHAR_ZERO = 48;
 	private static final char[] NaN_CHARS = ("NaN").toCharArray();
 	private static final char[] POS_INFINITY_CHARS = ("PositiveInfinity").toCharArray();
 	private static final char[] NEG_INFINITY_CHARS = ("NegativeInfinity").toCharArray();
 	private static final char NEGATIVE_SIGN = '-';
+
+	private static final int UNLIMITED_PRECISION = -1;
+	private static final int MAX_PRECISION = 14;
+	private static final double[] DOUBLE_POWERS_OF_TEN = new double[15];
+	static {
+		DOUBLE_POWERS_OF_TEN[0]  = 1.0d;
+		DOUBLE_POWERS_OF_TEN[1]  = 10.0d;
+		DOUBLE_POWERS_OF_TEN[2]  = 100.0d;
+		DOUBLE_POWERS_OF_TEN[3]  = 1000.0d;
+		DOUBLE_POWERS_OF_TEN[4]  = 10000.0d;
+		DOUBLE_POWERS_OF_TEN[5]  = 100000.0d;
+		DOUBLE_POWERS_OF_TEN[6]  = 1000000.0d;
+		DOUBLE_POWERS_OF_TEN[7]  = 10000000.0d;
+		DOUBLE_POWERS_OF_TEN[8]  = 100000000.0d;
+		DOUBLE_POWERS_OF_TEN[9]  = 1000000000.0d;
+		DOUBLE_POWERS_OF_TEN[10] = 10000000000.0d;
+		DOUBLE_POWERS_OF_TEN[11] = 100000000000.0d;
+		DOUBLE_POWERS_OF_TEN[12] = 1000000000000.0d;
+		DOUBLE_POWERS_OF_TEN[13] = 10000000000000.0d;
+		DOUBLE_POWERS_OF_TEN[14] = 100000000000000.0d;	
+	}
 
 //    public static double charBufferToDouble(final CharBuffer buffer, final int length) throws ParseException {
 //        return charBufferToDouble(buffer, length, 0);
@@ -179,90 +196,12 @@ enum Log3rUtils {
 //
 
 
-	static double raiseToPowerOfTen(double val, int power) throws ParseException {
-        switch (power)
-        {
-            case 0:
-                return val;
-            case 1:
-                return val*10;
-            case 2:
-                return val*100;
-            case 3:
-                return val*1000;
-            case 4:
-                return val*10000;
-            case 5:
-                return val*100000;
-            case 6:
-                return val*1000000;
-            case 7:
-                return val*10000000;
-            case 8:
-                return val*100000000;
-            case 9:
-                return val*1000000000;
-			case 10:
-				return val*10000000000L;
-			case 11:
-				return val*100000000000L;
-			case 12:
-				return val*1000000000000L;
-			case 13:
-				return val*10000000000000L;
-			case 14:
-				return val*100000000000000L;
-            default:
-                throw new ParseException("Unhandled power of ten: " + power, 0);
-        }
+	static final double raiseToPowerOfTen(final double val, final int power) throws ParseException {
+		if (power > MAX_PRECISION)
+			throw new ParseException("Unhandled power of ten: " + power, 0);
 
-    }
-
-//
-//    private static long raiseLongToPower(long val, int power) throws ParseException {
-//        switch (power)
-//        {
-//            case 0:
-//                return val;
-//            case 1:
-//                return val*10;
-//            case 2:
-//                return val*100;
-//            case 3:
-//                return val*1000;
-//            case 4:
-//                return val*10000;
-//            case 5:
-//                return val*100000;
-//            case 6:
-//                return val*1000000;
-//            case 7:
-//                return val*10000000;
-//            case 8:
-//                return val*100000000;
-//            case 9:
-//                return val*1000000000;
-//            case 10:
-//                return val*10000000000L;
-//            case 11:
-//                return val*100000000000L;
-//            case 12:
-//                return val*1000000000000L;
-//            case 13:
-//                return val*10000000000000L;
-//            case 14:
-//                return val*100000000000000L;
-//            case 15:
-//                return val*1000000000000000L;
-//            case 16:
-//                return val*10000000000000000L;
-//            case 17:
-//                return val*100000000000000000L;
-//            default:
-//                throw new ParseException("Unhandled power of ten: " + power, 0);
-//        }
-//
-//    }
+		return val * DOUBLE_POWERS_OF_TEN[power];
+	}
 
     public static void charArrayToByteArray(final int length, final char[] charArr, final byte[] byteArr)  {
 

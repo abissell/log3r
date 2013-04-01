@@ -1,16 +1,22 @@
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public enum TestUtils {
 	INSTANCE;
 
-	private static final AtomicPsuedoRandom RANDOM = new AtomicPsuedoRandom((int) System.currentTimeMillis());
+	private static final AtomicPsuedoRandom random = new AtomicPsuedoRandom((int) System.currentTimeMillis());
+	private static final Random javaRandom = new Random((int) System.currentTimeMillis() + 100000);
 
 	private TestUtils() {
 
 	}
 
 	public static final int randomInt(final int n) {
-		return RANDOM.nextInt(n);
+		return random.nextInt(n);
+	}
+
+	public static final double randomDouble() {
+		return javaRandom.nextDouble();
 	}
 
 	// cf. JCIP 12.1.3
