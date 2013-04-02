@@ -6,11 +6,9 @@ import org.apache.log4j.Logger;
 
 import java.io.OutputStream;
 
-// Enum Singleton
 @SuppressWarnings("FinalStaticMethod")
 public enum Log3r {
-	@SuppressWarnings("UnusedDeclaration")
-	INSTANCE;
+	@SuppressWarnings("UnusedDeclaration") INSTANCE; // Enum singleton
 
 	private static final Logger log = Logger.getLogger(Log3r.class);
 

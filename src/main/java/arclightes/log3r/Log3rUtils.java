@@ -50,19 +50,11 @@ enum Log3rUtils {
 	}
 
 	static final double raiseToPowerOfTen(final double val, final int power) throws ParseException {
-		try {
-			return val * DOUBLE_POWERS_OF_TEN[power];
-		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new ParseException("Unhandled power of ten: " + power, 0);
-		}
+		return val * DOUBLE_POWERS_OF_TEN[power];
 	}
 
 	static final long getLongPowerOfTen(final int power) throws ParseException {
-		try {
-			return LONG_POWERS_OF_TEN[power];
-		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new ParseException("Unhandled power of ten: " + power, 0);
-		}
+		return LONG_POWERS_OF_TEN[power];
 	}
 
     public static int getInt(char i) {
