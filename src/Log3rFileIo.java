@@ -1,11 +1,10 @@
 import java.io.*;
 
-// Enum Singleton
-enum FileIo {
-	@SuppressWarnings("UnusedDeclaration")
-	INSTANCE;
+@SuppressWarnings("FinalStaticMethod")
+enum Log3rFileIo {
+	@SuppressWarnings("UnusedDeclaration") INSTANCE; // Enum singleton
 
-	public static String getDirFromPath(final String path) {
+	static final String getDirFromPath(final String path) {
 		String fileSep = "/";
 		if (!path.contains(fileSep))
 			fileSep = "\\";
@@ -16,7 +15,7 @@ enum FileIo {
 
 	}
 
-	public static String getFileFromPath(final String path) {
+	static final String getFileFromPath(final String path) {
 		String fileSep = "/";
 		if (!path.contains(fileSep))
 			fileSep = "\\";
@@ -27,7 +26,7 @@ enum FileIo {
 
 	}
 
-	public static int getMaxFileIdx(final String path, final String fileName)
+	static final int getMaxFileIdx(final String path, final String fileName)
 	{
 		int maxIdx = 0;
 		final String[] files = new File(path).list();

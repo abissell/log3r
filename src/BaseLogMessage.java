@@ -4,7 +4,7 @@ abstract class BaseLogMessage implements LogMessage {
 	int msgLength;
 
 	BaseLogMessage() {
-		array = new char[SettingDefaults.getPerfLogMaxMsgLength()];
+		array = new char[Log3rSettings.getInstance().getLog3rMaxMessageLengthChars()];
 	}
 
 	public final char[] array() {
@@ -15,7 +15,7 @@ abstract class BaseLogMessage implements LogMessage {
 		return msgLength;
 	}
 
-	public void reset() {
+	public final void reset() {
 		msgLength = 0;
 	}
 

@@ -1,3 +1,0 @@
-interface InternalCharBlock extends CharBlock {
-
-}

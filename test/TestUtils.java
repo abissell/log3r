@@ -1,8 +1,8 @@
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public enum TestUtils {
-	INSTANCE;
+enum TestUtils {
+	@SuppressWarnings("UnusedDeclaration")INSTANCE; // Enum singleton
 
 	private static final AtomicPsuedoRandom random = new AtomicPsuedoRandom((int) System.currentTimeMillis());
 	private static final Random javaRandom = new Random((int) System.currentTimeMillis() + 100000);

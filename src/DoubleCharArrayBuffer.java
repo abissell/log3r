@@ -1,48 +1,31 @@
+import java.text.ParseException;
+
+// Not Thread Safe
 final class DoubleCharArrayBuffer {
+	private static final int DEFAULT_PRECISION = Log3rSettings.getInstance().getFloatingPointPrecisionDefault();
 	private static final char[] NaN_CHARS = Double.toString(Double.NaN).toCharArray();
 	private static final char[] POS_INFINITY_CHARS = Double.toString(Double.POSITIVE_INFINITY).toCharArray();
 	private static final char[] NEG_INFINITY_CHARS = Double.toString(Double.NEGATIVE_INFINITY).toCharArray();
 	private static final char DECIMAL_POINT = '.';
-	private static final double DEFAULT_MAX_PRECISION = SettingDefaults.getFloatingPointMaxPrecisionDefault();
 	private final NumeralCharArrayBuffer wholeBuffer = new NumeralCharArrayBuffer();
 	private final NumeralCharArrayBuffer fractionalBuffer = new NumeralCharArrayBuffer();
 
-    public DoubleCharArrayBuffer() {
+    DoubleCharArrayBuffer() {
 
 	}
 
-	public NumeralCharArrayBuffer getWholeBuffer() {
-		return wholeBuffer;
+	void appendDouble(final double d) throws ParseException {
+		appendDouble(d, DEFAULT_PRECISION);
 	}
 
-    public NumeralCharArrayBuffer getFractionalBuffer() {
-        return fractionalBuffer;
-    }
-
-    public int getWholeLength() {
-        return wholeBuffer.getLength();
-    }
-
-    public void setWholeLength(final int wholeLength) {
-        wholeBuffer.setLength(wholeLength);
-    }
-
-    public int getFractionalLength() {
-        return fractionalBuffer.getLength();
-    }
-
-    public void setFractionalLength(final int fractionalLength) {
-        fractionalBuffer.setLength(fractionalLength);
-    }
-
-	public void appendDouble(final double d, final int precision) {
+	void appendDouble(final double d, final int precision) throws ParseException {
 		if (Double.isNaN(d)) {
 			wholeBuffer.appendChars(NaN_CHARS);
 			return;
 		}
 
 		if (Double.isInfinite(d)) {
-			if (d > 0) {
+			if (d > 0.0d) {
 				wholeBuffer.appendChars(POS_INFINITY_CHARS);
 			} else {
 				wholeBuffer.appendChars(NEG_INFINITY_CHARS);
@@ -50,26 +33,38 @@ final class DoubleCharArrayBuffer {
 			return;
 		}
 
-		if (d == 0) {
+		if (d == 0.0d) {
 			wholeBuffer.appendChar('0');
 			if (precision >= 1) {
 				fractionalBuffer.bulkAppendZeros(precision);
 			}
+			return;
 		}
 
-		long el = 0 ;
-
-		// final long el =
-
-		int i = (int) d;
-		wholeBuffer.appendInt(i);
-
-		if (i == 0) {
-			wholeBuffer.appendChar('0');
-		}
+		appendNonInfiniteOrZeroDouble(d, precision);
 	}
 
-    public int copyToDestArrayAndReset(final char[] destArray, int destPos, final int precision) {
+	void appendNonInfiniteOrZeroDouble(final double d, int precision) throws ParseException {
+		final double absRaised;
+		final NumeralCharArrayBuffer.IntegerSign sign;
+		if (d < 0.0d) {
+			absRaised = -1.0d * Log3rUtils.raiseToPowerOfTen(d, precision);
+			sign = NumeralCharArrayBuffer.IntegerSign.NEGATIVE;
+		} else {
+			absRaised = Log3rUtils.raiseToPowerOfTen(d, precision);
+			sign = NumeralCharArrayBuffer.IntegerSign.POSITIVE;
+		}
+
+		long precisionMult = (long) absRaised;
+
+		if (absRaised - precisionMult >= 0.5d) { ++precisionMult; }
+
+		final long divisor = Log3rUtils.getLongPowerOfTen(precision);
+		fractionalBuffer.appendLong(precisionMult % divisor);
+		wholeBuffer.appendLong((precisionMult / divisor), sign);
+	}
+
+    int copyToDestArrayAndReset(final char[] destArray, int destPos) {
         final int startDestPos = destPos;
 
 		if (wholeBuffer.getLength() > 0) {
@@ -79,16 +74,7 @@ final class DoubleCharArrayBuffer {
 		destArray[destPos++] = DECIMAL_POINT; // Always append decimal point even if there's nothing in fractional buffer
 
 		if (fractionalBuffer.getLength() > 0) {
-			if (precision == 0) {
-				// Reset the buffer without copying
-				fractionalBuffer.setLength(0);
-			} else {
-				if (precision <= -1) {
-					destPos += fractionalBuffer.copyToDestArrayAndReset(destArray, destPos);
-				} else {
-					destPos += fractionalBuffer.copyToDestArrayAndReset(destArray, destPos, precision);
-				}
-			}
+			destPos += fractionalBuffer.copyToDestArrayAndReset(destArray, destPos);
 		}
 
         return destPos - startDestPos;

@@ -1,8 +1,6 @@
-import net.jcip.annotations.ThreadSafe;
-
 import java.nio.CharBuffer;
 
-@ThreadSafe
+// Thread Safe
 public enum ExtendedCharBlock implements CharBlock {
 
 	TEST("TEST: "),

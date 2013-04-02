@@ -5,17 +5,20 @@ import org.apache.log4j.Logger;
 import java.io.OutputStream;
 
 // Enum Singleton
-public enum PerfLog {
+@SuppressWarnings("FinalStaticMethod")
+public enum Log3r {
 	@SuppressWarnings("UnusedDeclaration")
 	INSTANCE;
 
-	private static final Logger log = Logger.getLogger(PerfLog.class);
+	private static final Logger log = Logger.getLogger(Log3r.class);
+	private static final float MSG_LENGTH_LOAD_FACTOR = 1.25f;
 
-	private static final int MAX_MSG_LENGTH = SettingDefaults.getPerfLogMaxMsgLength();
+	private static final int MAX_MSG_LENGTH = Log3rSettings.getInstance().getLog3rMaxMessageLengthChars();
     private static final RingBuffer<MsgData> BUFFER;
 	static {
-		if (SettingDefaults.getPerfLogFileLengthMb() > 1750) // Prevent integer overflow on file size
+		if (Log3rSettings.getInstance().getLog3rFileLengthMb() > 1750) // Prevent integer overflow on file size
 			throw new IllegalArgumentException("Perf Log max file length in MB must be <= 1750!");
+
 		final EventFactory<MsgData> eventFactory = new EventFactory<MsgData>() {
 			@Override
 			public MsgData newInstance() {
@@ -23,40 +26,45 @@ public enum PerfLog {
 			}
 		};
 		final Disruptor<MsgData> disruptor = new Disruptor<>(eventFactory,
-				ExecutorFactory.CACHED_THREAD_EXECUTOR,
-				new MultiThreadedClaimStrategy(SettingDefaults.getPerfLogQueueSize()),
+				Log3rExecutorFactory.CACHED_THREAD_EXECUTOR,
+				new MultiThreadedClaimStrategy(Log3rSettings.getInstance().getLog3rMessagesQueueSize()),
 				new BlockingWaitStrategy());
 		disruptor.handleEventsWith(new LogHandler());
 		BUFFER = disruptor.start();
 	}
     private static final ThreadLocal<byte[]> BYTE_BUF = new ThreadLocal<>();
 
-    public static byte[] getByteBuf() {
+	public static final Log3r getInstance() {
+		return INSTANCE;
+	}
+
+    private static byte[] getByteBuf() {
         byte[] buf = BYTE_BUF.get();
         if (buf == null)
         {
             buf = new byte[MAX_MSG_LENGTH];
             BYTE_BUF.set(buf);
         }
-        //System.arraycopy(BlankBuffer, 0, buf, 0, MAX_MSG_LENGTH);
         return buf;
     }
     
-	public static LogMessage getMessage(final LogMessageType type) {
+	private static LogMessage getMessage(final LogMessageType type) {
         return type.getNextMessage();
     }
 
-    public void log(final LogMessage message) {
-        log(LogTargetImpl.DEFAULT, message);
+    private static void log(final LogMessage message) {
+        log(Log3rTarget.DEFAULT, message);
     }
 
-    public void log(final LogTarget logTarget, final LogMessage message) {
+    private static void log(final LogTarget logTarget, final LogMessage message) {
         final char[] charArr = message.array();
         final int msgLen = message.msgLength();
         final long sequence = BUFFER.next();
         final MsgData msgData = BUFFER.get(sequence);
-        if (msgData.data == null || msgData.length < msgLen)
-            msgData.data = new char[msgLen];
+        if (msgData.data == null || msgLen > msgData.length) {
+            final int newMsgDataLen = (int) (MSG_LENGTH_LOAD_FACTOR * msgLen);
+			msgData.data = new char[newMsgDataLen];
+		}
         msgData.length = msgLen;
         msgData.target = logTarget;
         System.arraycopy(charArr, 0, msgData.data, 0, msgLen);
@@ -66,33 +74,26 @@ public enum PerfLog {
     private static final  /* inner */ class LogHandler implements EventHandler<MsgData> {
         public void onEvent(final MsgData logMessage, final long sequence, final boolean endOfBatch) throws Exception {
             write(logMessage);
-
         }
     }
     
     private static void write(final MsgData message) {
-        try
-        {
-
+        try {
             final char[] charArr = message.data;
             final int length = message.length;
             final byte[] bytes = getByteBuf();
-            Log3rAppendUtils.charArrayToByteArray(length, charArr, bytes);
+            Log3rUtils.charArrayToByteArray(length, charArr, bytes);
             final LogTarget logTarget = message.target;
-            try
-            {
+            try {
 				logTarget.lockLog();
                 final OutputStream outputFile = logTarget.getLogOutput();
                 outputFile.write(bytes, 0, length);
                 outputFile.write('\n');
                 outputFile.flush();
-            }
-            finally {
+            } finally {
             	logTarget.unlockLog();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }

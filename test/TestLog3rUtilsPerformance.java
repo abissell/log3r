@@ -68,7 +68,7 @@ public class TestLog3rUtilsPerformance extends AbstractBenchmark {
 	public void testCharIntConversion() {
 		for (int i = 0; i < NUM_ITER; i++) {
 			for (int j = 0; j < TESTS_PER_ITER; j++) {
-				final int convertedInt = Log3rAppendUtils.getInt(RANDOM_CHARS[j]);
+				final int convertedInt = Log3rUtils.getInt(RANDOM_CHARS[j]);
 				RESULT_1 += convertedInt;
 			}
 		}
@@ -114,7 +114,7 @@ public class TestLog3rUtilsPerformance extends AbstractBenchmark {
 	public void testIntCharConversion() {
 		for (int i = 0; i < NUM_ITER; i++) {
 			for (int j = 0; j < TESTS_PER_ITER; j++) {
-				final char convertedChar = Log3rAppendUtils.getChar(RANDOM_INTS[j]);
+				final char convertedChar = Log3rUtils.getChar(RANDOM_INTS[j]);
 				RESULT_1 += convertedChar;
 			}
 		}
@@ -259,7 +259,7 @@ public class TestLog3rUtilsPerformance extends AbstractBenchmark {
 			for (int i = 0; i < NUM_ITER; i++) {
 				for (int j = 0; j < TESTS_PER_ITER; j++) {
 					final double d = RANDOM_DOUBLES[j];
-					final double raised = Log3rAppendUtils.raiseToPowerOfTen(d, RANDOM_INTS[j]);
+					final double raised = Log3rUtils.raiseToPowerOfTen(d, RANDOM_INTS[j]);
 					final long cast = (long) raised;
 					RESULT_1 += cast;
 				}
