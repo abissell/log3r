@@ -1,7 +1,7 @@
 package main.java.arclightes.log3r;
 
 final class NumeralCharArrayBuffer {
-	private static final int MAX_LENGTH = 128;
+	private static final int MAX_LENGTH = 64;
 	private static final char[] ZEROS_SOURCE_ARRAY = new char[MAX_LENGTH];
 	static {
 		for (int i = 0; i < MAX_LENGTH; i++)

@@ -38,10 +38,6 @@ enum Log3rMessageType implements LogMessageType {
 		long idx = sequence.incrementAndGet();
 		idx = idx & indexMask;
 		CharArrayLogMessage message = messages[(int) idx];
-//		if (message == null) {
-//			message = constructNewLogMessage();
-//			messages[(int) idx] = message;
-//		}
 		message.reset();
 		return message;
 	}

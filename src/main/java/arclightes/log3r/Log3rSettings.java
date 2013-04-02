@@ -10,7 +10,7 @@ enum Log3rSettings {
 	private static final int LOG3R_MAX_MESSAGE_LENGTH_CHARS = 131072;
 	private static final int LOG3R_INITIAL_MSGDATA_LENGTH = 1024;
 	private static final float LOG3R_MSGDATA_LENGTH_LOAD_FACTOR = 1.25f;
-    private static final int LOG3R_MESSAGES_QUEUE_SIZE = 512;
+    private static final int LOG3R_MESSAGES_QUEUE_SIZE = 1024;
 	private static final int FLOATING_POINT_PRECISION_DEFAULT = 10;
 
 	static Log3rSettings getInstance() {
