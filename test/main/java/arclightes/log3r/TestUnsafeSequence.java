@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import com.lmax.disruptor.Sequence;
 import com.lmax.disruptor.Sequencer;
 import org.junit.Test;

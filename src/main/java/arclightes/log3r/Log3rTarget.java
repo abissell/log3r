@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import org.apache.log4j.Logger;
 
 import java.io.BufferedOutputStream;

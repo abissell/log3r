@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import com.carrotsearch.junitbenchmarks.AbstractBenchmark;
 import junit.framework.Assert;
 import org.junit.AfterClass;

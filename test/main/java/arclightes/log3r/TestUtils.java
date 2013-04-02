@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,6 +19,15 @@ enum TestUtils {
 
 	public static final double randomDouble() {
 		return javaRandom.nextDouble();
+	}
+
+	public static final char[] getRandomCharArray(final int length) {
+		final char[] newArray = new char[length];
+		for (int i = 0; i < length; ++i) {
+			final int randomInt = randomInt(500);
+			newArray[i] = (char) randomInt;
+		}
+		return newArray;
 	}
 
 	// cf. JCIP 12.1.3

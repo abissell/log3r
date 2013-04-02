@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 // Not Thread Safe
 abstract class BaseLogMessage implements LogMessage {
 	char[] array;

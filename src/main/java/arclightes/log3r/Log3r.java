@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import com.lmax.disruptor.*;
 import com.lmax.disruptor.dsl.Disruptor;
 import org.apache.log4j.Logger;
@@ -11,8 +13,8 @@ public enum Log3r {
 	INSTANCE;
 
 	private static final Logger log = Logger.getLogger(Log3r.class);
-	private static final float MSG_LENGTH_LOAD_FACTOR = 1.25f;
 
+	private static final float MSGDATA_LENGTH_LOAD_FACTOR = Log3rSettings.getInstance().getLog3rMsgDataLengthLoadFactor();
 	private static final int MAX_MSG_LENGTH = Log3rSettings.getInstance().getLog3rMaxMessageLengthChars();
     private static final RingBuffer<MsgData> BUFFER;
 	static {
@@ -61,8 +63,8 @@ public enum Log3r {
         final int msgLen = message.msgLength();
         final long sequence = BUFFER.next();
         final MsgData msgData = BUFFER.get(sequence);
-        if (msgData.data == null || msgLen > msgData.length) {
-            final int newMsgDataLen = (int) (MSG_LENGTH_LOAD_FACTOR * msgLen);
+        if (msgLen > msgData.length) {
+            final int newMsgDataLen = (int) (MSGDATA_LENGTH_LOAD_FACTOR * msgLen);
 			msgData.data = new char[newMsgDataLen];
 		}
         msgData.length = msgLen;
@@ -99,8 +101,12 @@ public enum Log3r {
     }
 
     private static final /* inner */ class MsgData {
-        private char[] data;
+        private char[] data = new char[Log3rSettings.getInstance().getLog3rInitialMsgDataLength()];
         private int length;
         private LogTarget target;
+
+		private MsgData() {
+
+		}
     }
 }

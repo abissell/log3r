@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import java.text.ParseException;
 
 // Not Thread Safe
@@ -50,6 +52,8 @@ final class DoubleCharArrayBuffer {
 		if (d < 0.0d) {
 			absRaised = -1.0d * Log3rUtils.raiseToPowerOfTen(d, precision);
 			sign = NumeralCharArrayBuffer.IntegerSign.NEGATIVE;
+			if (d > -1.0d)
+				wholeBuffer.appendChar('-'); // Ensures negative sign is added for d in (-1.0d, 0.0d)
 		} else {
 			absRaised = Log3rUtils.raiseToPowerOfTen(d, precision);
 			sign = NumeralCharArrayBuffer.IntegerSign.POSITIVE;

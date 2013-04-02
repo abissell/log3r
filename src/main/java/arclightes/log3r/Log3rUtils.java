@@ -1,6 +1,9 @@
+package main.java.arclightes.log3r;
+
 import com.lmax.disruptor.util.Util;
 
 import java.text.ParseException;
+import java.util.Arrays;
 
 @SuppressWarnings("FinalStaticMethod")
 enum Log3rUtils {
@@ -75,7 +78,6 @@ enum Log3rUtils {
 	}
 
 	static final void charArrayToByteArray(final int length, final char[] charArr, final byte[] byteArr)  {
-
 		for (int i = 0; i < length; i++) {
 			byteArr[i] = (byte)charArr[i];
 		}
@@ -90,8 +92,8 @@ enum Log3rUtils {
 	}
 
 	// Extensible enum example function
-//	public final <U extends Enum<U> & CharBlock> void appendAllBlocks(Class<U> blockType) {
-//		for (CharBlock block : blockType.getEnumConstants()) {
+//	public final <U extends Enum<U> & main.java.arclightes.log3r.CharBlock> void appendAllBlocks(Class<U> blockType) {
+//		for (main.java.arclightes.log3r.CharBlock block : blockType.getEnumConstants()) {
 //			append(block.buffer());
 //		}
 //	}

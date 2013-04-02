@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import java.util.concurrent.*;
 
 enum Log3rExecutorFactory {

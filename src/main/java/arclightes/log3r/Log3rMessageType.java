@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import com.lmax.disruptor.Sequence;
 
 // Thread Safe
@@ -17,7 +19,7 @@ enum Log3rMessageType implements LogMessageType {
 	private Log3rMessageType(int queueSize) {
 		if (! Log3rUtils.isPowerOfTwo(queueSize)) {
 			final int newQueueSize = Log3rUtils.ceilingNextPowerOfTwo(queueSize);
-			System.err.println("Tried to initialize Log3rMessageType with queueSize=" + queueSize +
+			System.err.println("Tried to initialize main.java.arclightes.log3r.Log3rMessageType with queueSize=" + queueSize +
 					           ", resetting to next power of two =" + newQueueSize);
 			queueSize = newQueueSize;
 		}

@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import org.apache.log4j.Logger;
 
 import java.nio.CharBuffer;
@@ -15,7 +17,7 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		super();
     }
 
-	public final LogMessage append(final LogMessage msg) {
+	public final CharArrayLogMessage append(final LogMessage msg) {
 		try {
 			append(msg.array(), 0, msg.msgLength());
 		} catch (Exception e) {
@@ -25,7 +27,7 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage append(final CharBlock block) {
+	public final CharArrayLogMessage append(final CharBlock block) {
 		try {
 			append(block.array());
 		} catch (Exception e) {
@@ -35,7 +37,7 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage append(final char c) {
+	public final CharArrayLogMessage append(final char c) {
 		try {
 			array[msgLength++] = c;
 		} catch (Exception e) {
@@ -45,11 +47,10 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage append(final char[] srcArray) {
+	public final CharArrayLogMessage append(final char[] srcArray) {
 		try {
-			final int priorMsgLength = msgLength;
+			System.arraycopy(srcArray, 0, array, msgLength, srcArray.length);
 			msgLength += srcArray.length;
-			System.arraycopy(srcArray, 0, array, priorMsgLength, srcArray.length);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -57,12 +58,10 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage append(final char[] srcArray, final int from, final int to) {
+	public final CharArrayLogMessage append(final char[] srcArray, final int srcPos, final int length) {
 		try {
-			final int priorMsgLength = msgLength;
-			final int appendedLength = to - from;
-			msgLength += appendedLength;
-			System.arraycopy(srcArray, from, array, priorMsgLength, appendedLength);
+			System.arraycopy(srcArray, srcPos, array, msgLength, length);
+			msgLength += length;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -70,12 +69,12 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage append(final CharBuffer srcBuffer) {
+	public final CharArrayLogMessage append(final CharBuffer srcBuffer) {
 		try {
 			final int srcBufferLength = srcBuffer.length();
 			if (srcBufferLength > 0) {
-				msgLength += srcBufferLength;
 				srcBuffer.get(array, msgLength, srcBufferLength);
+				msgLength += srcBufferLength;
 			}
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -84,7 +83,7 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage append(final int i) {
+	public final CharArrayLogMessage append(final int i) {
 		try {
 			integerBuffer.appendInt(i);
 			msgLength += integerBuffer.copyToDestArrayAndReset(array, msgLength);
@@ -95,7 +94,7 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage append(final long el) {
+	public final CharArrayLogMessage append(final long el) {
 		try {
 			integerBuffer.appendLong(el);
 			msgLength += integerBuffer.copyToDestArrayAndReset(array, msgLength);
@@ -106,7 +105,7 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage append(final double d) {
+	public final CharArrayLogMessage append(final double d) {
 		try {
 			doubleBuffer.appendDouble(d);
 			msgLength += doubleBuffer.copyToDestArrayAndReset(array, msgLength);
@@ -117,7 +116,7 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage append(final double d, final int precision) {
+	public final CharArrayLogMessage append(final double d, final int precision) {
 		try {
 			doubleBuffer.appendDouble(d, precision);
 			msgLength += doubleBuffer.copyToDestArrayAndReset(array, msgLength);
@@ -128,13 +127,13 @@ final class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayLog
 		return this;
 	}
 
-	public final LogMessage appendMillisecondTimestamp(final long msTimestamp) {
+	public final CharArrayLogMessage appendMillisecondTimestamp(final long msTimestamp) {
 		try {
 			c.setTimeInMillis(msTimestamp);
 
 			integerBuffer.appendInt(c.get(Calendar.YEAR));
 			integerBuffer.appendChar('-');
-			integerBuffer.appendZeroPaddedNonNegativeInt(c.get(Calendar.MONTH), 2);
+			integerBuffer.appendZeroPaddedNonNegativeInt(c.get(Calendar.MONTH) + 1, 2);
 			integerBuffer.appendChar('-');
 			integerBuffer.appendZeroPaddedNonNegativeInt(c.get(Calendar.DAY_OF_MONTH), 2);
 			integerBuffer.appendChar(' ');

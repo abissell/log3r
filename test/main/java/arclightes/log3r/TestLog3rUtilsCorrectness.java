@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import junit.framework.Assert;
 import org.junit.Test;
 

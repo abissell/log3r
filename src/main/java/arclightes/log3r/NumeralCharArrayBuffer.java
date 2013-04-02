@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 final class NumeralCharArrayBuffer {
 	private static final int MAX_LENGTH = 128;
 	private static final char[] ZEROS_SOURCE_ARRAY = new char[MAX_LENGTH];
@@ -53,7 +55,9 @@ final class NumeralCharArrayBuffer {
 			i /= 10;
 		} while (i > 0);
 
-		int numPaddedZeros = minLength - ((capacity - 1) - idx);
+		++idx;
+
+		int numPaddedZeros = minLength - (capacity - idx);
 		if (numPaddedZeros >= 2) {
 			bulkAppendZeros(numPaddedZeros);
 			return (moveBackAppendedUnsignedDigitsToFront(idx, IntegerSign.POSITIVE) + numPaddedZeros);
@@ -87,6 +91,7 @@ final class NumeralCharArrayBuffer {
 			i /= 10;
 		} while (i > 0);
 
+		++idx;
 		return moveBackAppendedUnsignedDigitsToFront(idx, sign);
 	}
 
@@ -120,11 +125,12 @@ final class NumeralCharArrayBuffer {
 			el /= 10L;
 		} while (el > 0L);
 
+		++idx;
 		return moveBackAppendedUnsignedDigitsToFront(idx, sign);
 	}
 
 	int moveBackAppendedUnsignedDigitsToFront(final int idx, final IntegerSign sign) {
-		final int copyLength = (capacity - 1) - idx;
+		final int copyLength = capacity - idx;
 		if (sign == IntegerSign.POSITIVE) {
 			System.arraycopy(buffer, idx, buffer, length, copyLength);
 			length += copyLength;

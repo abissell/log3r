@@ -1,3 +1,5 @@
+package main.java.arclightes.log3r;
+
 import java.nio.CharBuffer;
 
 // Thread Safe
