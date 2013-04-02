@@ -5,7 +5,7 @@ import com.lmax.disruptor.Sequence;
 // Thread Safe
 enum Log3rMessageType implements LogMessageType {
 	ARRAY(Log3rSettings.getInstance().getLog3rMessagesQueueSize()) {
-		final LogMessage constructNewLogMessage() {
+		final CharArrayLogMessage constructNewLogMessage() {
 			return new CharArrayLog3rMessage();
 		}
 	};
@@ -14,7 +14,7 @@ enum Log3rMessageType implements LogMessageType {
 
 	private final int indexMask;
 	private final Sequence sequence = new Sequence(INITIAL_CURSOR_VALUE);
-	private final LogMessage[] messages;
+	private final CharArrayLogMessage[] messages;
 
 	private Log3rMessageType(int queueSize) {
 		if (! Log3rUtils.isPowerOfTwo(queueSize)) {
@@ -25,19 +25,23 @@ enum Log3rMessageType implements LogMessageType {
 		}
 
 		this.indexMask = queueSize - 1;
-		this.messages = new LogMessage[queueSize];
+		this.messages = new CharArrayLogMessage[queueSize];
+
+		for (int i = 0; i < queueSize; i++) {
+			this.messages[i] = constructNewLogMessage();
+		}
 	}
 
-	abstract LogMessage constructNewLogMessage();
+	abstract CharArrayLogMessage constructNewLogMessage();
 
-	public final LogMessage getNextMessage() {
+	public final CharArrayLogMessage getNextMessage() {
 		long idx = sequence.incrementAndGet();
 		idx = idx & indexMask;
-		LogMessage message = messages[(int) idx];
-		if (message == null) {
-			message = constructNewLogMessage();
-			messages[(int) idx] = message;
-		}
+		CharArrayLogMessage message = messages[(int) idx];
+//		if (message == null) {
+//			message = constructNewLogMessage();
+//			messages[(int) idx] = message;
+//		}
 		message.reset();
 		return message;
 	}
