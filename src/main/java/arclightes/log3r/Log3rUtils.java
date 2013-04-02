@@ -49,11 +49,11 @@ enum Log3rUtils {
 		LONG_POWERS_OF_TEN[14] = 100000000000000L;
 	}
 
-	static final double raiseToPowerOfTen(final double val, final int power) throws ParseException {
+	static final double raiseToPowerOfTen(final double val, final int power) {
 		return val * DOUBLE_POWERS_OF_TEN[power];
 	}
 
-	static final long getLongPowerOfTen(final int power) throws ParseException {
+	static final long getLongPowerOfTen(final int power) {
 		return LONG_POWERS_OF_TEN[power];
 	}
 

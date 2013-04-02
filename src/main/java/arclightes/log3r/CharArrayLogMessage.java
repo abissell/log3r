@@ -3,7 +3,7 @@ package main.java.arclightes.log3r;
 import java.nio.CharBuffer;
 
 public interface CharArrayLogMessage extends LogMessage {
-	@Override // Allows chained appending of LogMessages
+	@Override // Allows chained appending of CharArrayLogMessages
 	CharArrayLogMessage append(LogMessage msg);
 
 	CharArrayLogMessage append(CharBlock block);

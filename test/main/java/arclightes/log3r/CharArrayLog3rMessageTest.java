@@ -158,6 +158,8 @@ public class CharArrayLog3rMessageTest {
 		final CharArrayLogMessage message = getRandomLogMessage(5, 0);
 		masterLength += copyMessageRangeToMasterArray(message, 0, masterArray, masterLength);
 
+		masterLength += appendToLogMessageAndMasterArray(0.12345, -1, message, masterArray, masterLength);
+
 		masterLength += appendToLogMessageAndMasterArray(0.0d, 1, message, masterArray, masterLength);
 		masterLength += appendToLogMessageAndMasterArray(Double.NaN, 10, message, masterArray, masterLength);
 		masterLength += appendToLogMessageAndMasterArray(Double.POSITIVE_INFINITY, 10, message, masterArray, masterLength);
@@ -282,7 +284,11 @@ public class CharArrayLog3rMessageTest {
 	}
 
 	private int appendToLogMessageAndMasterArray(final double d, final int precision, final CharArrayLogMessage message, final char[] masterArray, final int masterLength) {
-		message.append(d, precision);
+		if (precision == -1)
+			message.append(d);
+		else
+			message.append(d, precision);
+
 		final char[] doubleChars = Double.toString(d).toCharArray();
 		final char[] charsToAppend;
 		if (Double.isNaN(d) || Double.isInfinite(d)) {

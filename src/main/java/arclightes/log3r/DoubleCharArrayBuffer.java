@@ -16,11 +16,11 @@ final class DoubleCharArrayBuffer {
 
 	}
 
-	void appendDouble(final double d) throws ParseException {
+	void appendDouble(final double d) {
 		appendDouble(d, DEFAULT_PRECISION);
 	}
 
-	void appendDouble(final double d, final int precision) throws ParseException {
+	void appendDouble(final double d, final int precision) {
 		if (Double.isNaN(d)) {
 			wholeBuffer.appendChars(NaN_CHARS);
 			return;
@@ -46,7 +46,7 @@ final class DoubleCharArrayBuffer {
 		appendNonInfiniteOrZeroDouble(d, precision);
 	}
 
-	void appendNonInfiniteOrZeroDouble(final double d, int precision) throws ParseException {
+	void appendNonInfiniteOrZeroDouble(final double d, int precision) {
 		final double absRaised;
 		final NumeralCharArrayBuffer.IntegerSign sign;
 		if (d < 0.0d) {
