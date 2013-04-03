@@ -1,5 +1,7 @@
 package main.java.arclightes.log3r;
 
+import org.joda.time.MutableDateTime;
+import org.joda.time.ReadWritableDateTime;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -176,13 +178,18 @@ public class CharArrayLog3rMessageTest {
 	}
 
 	@Test
-	public void testAppendMillisecondTimestamps() {
+	public void testAppendMillisecondTimestampsBothLibraries() {
+		testAppendMillisecondTimestamps(DateLibrary.JDK);
+		testAppendMillisecondTimestamps(DateLibrary.JODA);
+	}
+
+	private void testAppendMillisecondTimestamps(final DateLibrary dateLibrary) {
 		final Calendar c = new GregorianCalendar();
 		final long startTime = System.currentTimeMillis();
 		long curTime = System.currentTimeMillis();
 		int tests = 0;
 		while (curTime - startTime <= 5000) {
-			testAppendMillisecondTimestamp(c);
+			testAppendMillisecondTimestamp(dateLibrary, c, new MutableDateTime());
 			curTime = System.currentTimeMillis();
 			++tests;
 		}
@@ -190,11 +197,17 @@ public class CharArrayLog3rMessageTest {
 		System.out.println(tests + " millsecond timestamp append tests performed");
 	}
 
-	private static void testAppendMillisecondTimestamp(final Calendar c) {
+	private static void testAppendMillisecondTimestamp(final DateLibrary library, final Calendar c, final ReadWritableDateTime dateTime) {
 		final long currentTimeMs = System.currentTimeMillis();
+		final CharArrayLogMessage message;
 		c.setTimeInMillis(currentTimeMs);
+		if (library == DateLibrary.JDK) {
+			message = new CharArrayLog3rMessage();
+		} else {
+			dateTime.setMillis(currentTimeMs);
+			message = new JodaCharArrayLog3rMessage();
+		}
 
-		final CharArrayLogMessage message = new CharArrayLog3rMessage();
 		message.appendMillisecondTimestamp(currentTimeMs);
 
 		Assert.assertArrayEquals(Arrays.copyOfRange(message.array(), 0, 4), Integer.toString(c.get(Calendar.YEAR)).toCharArray());
@@ -246,9 +259,15 @@ public class CharArrayLog3rMessageTest {
 			millisecondTarget[2] = '0';
 		}
 		millisecondTarget[3] = Integer.toString(millisecondTargetInt % 10).charAt(0);
+
 		Assert.assertArrayEquals(Arrays.copyOfRange(message.array(), 19, 23), millisecondTarget);
 
 		// System.out.println(message);
+	}
+
+	private enum DateLibrary {
+		JDK,
+		JODA
 	}
 
 	private static CharArrayLogMessage getRandomLogMessage(final int numSubArrays, final int subArraysStartIdx) {

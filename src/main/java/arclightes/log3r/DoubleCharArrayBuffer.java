@@ -1,7 +1,5 @@
 package main.java.arclightes.log3r;
 
-import java.text.ParseException;
-
 // Not Thread Safe
 final class DoubleCharArrayBuffer {
 	private static final int DEFAULT_PRECISION = Log3rSettings.getInstance().getFloatingPointPrecisionDefault();

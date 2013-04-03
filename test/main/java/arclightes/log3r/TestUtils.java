@@ -17,6 +17,10 @@ enum TestUtils {
 		return random.nextInt(n);
 	}
 
+	public static final long randomLong(final long el) {
+		return (javaRandom.nextLong() % el);
+	}
+
 	public static final double randomDouble() {
 		return javaRandom.nextDouble();
 	}

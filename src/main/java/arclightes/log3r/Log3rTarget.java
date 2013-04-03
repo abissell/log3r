@@ -5,7 +5,8 @@ import org.apache.log4j.Logger;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public enum Log3rTarget implements LogTarget {
 	DEFAULT("default");
@@ -14,11 +15,11 @@ public enum Log3rTarget implements LogTarget {
 
 	private static final int MAX_FILE_LENGTH = Log3rSettings.getInstance().getLog3rFileLengthMb();
 
-	/* Guarded by "semaphore" */ private OutputStream outputStream;
+	/* Guarded by "fileLock" */ private OutputStream outputStream;
 	private int logIdx;
 	private int bytesWritten = 0;
 	private final String logFile;
-	private final Semaphore semaphore = new Semaphore(1);
+	private final Lock fileLock = new ReentrantLock();
 
 	private Log3rTarget(final String logFile) {
 		this.logFile = "perf.log.file" + logFile;
@@ -77,15 +78,10 @@ public enum Log3rTarget implements LogTarget {
 	}
 
 	public final void lockLog() {
-		try {
-			semaphore.acquire();
-		} catch (InterruptedException e) {
-			log.error(e.getMessage(), e);
-		}
+		fileLock.lock();
 	}
 
 	public final void unlockLog() {
-		if (semaphore.availablePermits() == 0)
-			semaphore.release();
+		fileLock.unlock();
 	}
 }

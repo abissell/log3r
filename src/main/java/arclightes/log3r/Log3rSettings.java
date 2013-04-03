@@ -17,27 +17,27 @@ enum Log3rSettings {
 		return INSTANCE;
 	}
 
-    public final int getLog3rFileLengthMb() {
+    public static final int getLog3rFileLengthMb() {
         return LOG3R_FILE_LENGTH_MB;
     }
 
-    public final int getLog3rMaxMessageLengthChars() {
+    public static final int getLog3rMaxMessageLengthChars() {
         return LOG3R_MAX_MESSAGE_LENGTH_CHARS;
     }
 
-	public final int getLog3rInitialMsgDataLength() {
+	public static final int getLog3rInitialMsgDataLength() {
 		return LOG3R_INITIAL_MSGDATA_LENGTH;
 	}
 
-	public final float getLog3rMsgDataLengthLoadFactor() {
+	public static final float getLog3rMsgDataLengthLoadFactor() {
 		return LOG3R_MSGDATA_LENGTH_LOAD_FACTOR;
 	}
 
-    public final int getLog3rMessagesQueueSize() {
+    public static final int getLog3rMessagesQueueSize() {
         return LOG3R_MESSAGES_QUEUE_SIZE;
     }
 
-	public final int getFloatingPointPrecisionDefault() {
+	public static final int getFloatingPointPrecisionDefault() {
 		return FLOATING_POINT_PRECISION_DEFAULT;
 	}
 }

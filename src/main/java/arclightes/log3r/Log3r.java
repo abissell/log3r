@@ -84,8 +84,8 @@ public enum Log3r {
             final byte[] bytes = getByteBuf();
             Log3rUtils.charArrayToByteArray(length, charArr, bytes);
             final LogTarget logTarget = message.target;
-            try {
-				logTarget.lockLog();
+			logTarget.lockLog();
+			try {
                 final OutputStream outputFile = logTarget.getLogOutput();
                 outputFile.write(bytes, 0, length);
                 outputFile.write('\n');
@@ -100,7 +100,7 @@ public enum Log3r {
 
     private static final /* inner */ class MsgData {
         private char[] data = new char[Log3rSettings.getInstance().getLog3rInitialMsgDataLength()];
-        private int length;
+        private int length = data.length;
         private LogTarget target;
 
 		private MsgData() {

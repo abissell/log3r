@@ -2,9 +2,6 @@ package main.java.arclightes.log3r;
 
 import com.lmax.disruptor.util.Util;
 
-import java.text.ParseException;
-import java.util.Arrays;
-
 @SuppressWarnings("FinalStaticMethod")
 enum Log3rUtils {
 	@SuppressWarnings("UnusedDeclaration") INSTANCE; // Enum singleton
