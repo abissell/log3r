@@ -3,7 +3,7 @@ log3r
 
 Pronounced "log-three-r" (as in "Reduce, Reuse, Recycle"), Java utilities for garbage minimized, multi-threaded logging using char[] arrays
 
-Copyright [2013] [Crom Trading, LLC]
+Copyright 2013 Crom Trading, LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
