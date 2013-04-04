@@ -11,6 +11,10 @@ public class Log3rMessageTypeTest {
 	@Test
 	public void testGetLogMessage() {
 		final LogMessageType messageType = Log3rMessageType.ARRAY;
-		final LogMessage newMessage = messageType.getNextMessage();
+		final SequencedLogMessage newMessage = Log3r.getLog3r().getSequencedLogMessage(messageType);
+		final CharArrayMessage appendableMsg = (CharArrayMessage) newMessage.m();
+		appendableMsg.append('c').append('i').append('j');
+		System.out.println(newMessage.m().toString());
+		Log3r.getLog3r().log(newMessage);
 	}
 }

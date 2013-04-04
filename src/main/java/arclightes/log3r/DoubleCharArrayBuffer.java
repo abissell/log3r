@@ -2,13 +2,13 @@ package main.java.arclightes.log3r;
 
 // Not Thread Safe
 final class DoubleCharArrayBuffer {
-	private static final int DEFAULT_PRECISION = Log3rSettings.getInstance().getFloatingPointPrecisionDefault();
+	private static final int DEFAULT_PRECISION = Log3rDefaultContext.getInstance().getFloatingPointPrecisionDefault();
 	private static final char[] NaN_CHARS = Double.toString(Double.NaN).toCharArray();
 	private static final char[] POS_INFINITY_CHARS = Double.toString(Double.POSITIVE_INFINITY).toCharArray();
 	private static final char[] NEG_INFINITY_CHARS = Double.toString(Double.NEGATIVE_INFINITY).toCharArray();
 	private static final char DECIMAL_POINT = '.';
 	private final NumeralCharArrayBuffer wholeBuffer = new NumeralCharArrayBuffer();
-	private final NumeralCharArrayBuffer fractionalBuffer = new NumeralCharArrayBuffer();
+	private final NumeralCharArrayBuffer fractionalBuffer = new NumeralCharArrayBuffer(Log3rUtil.getMaximumPrecision());
 
     DoubleCharArrayBuffer() {
 
@@ -48,12 +48,12 @@ final class DoubleCharArrayBuffer {
 		final double absRaised;
 		final NumeralCharArrayBuffer.IntegerSign sign;
 		if (d < 0.0d) {
-			absRaised = -1.0d * Log3rUtils.raiseToPowerOfTen(d, precision);
+			absRaised = -1.0d * Log3rUtil.raiseToPowerOfTen(d, precision);
 			sign = NumeralCharArrayBuffer.IntegerSign.NEGATIVE;
 			if (d > -1.0d)
 				wholeBuffer.appendChar('-'); // Ensures negative sign is added for d in (-1.0d, 0.0d)
 		} else {
-			absRaised = Log3rUtils.raiseToPowerOfTen(d, precision);
+			absRaised = Log3rUtil.raiseToPowerOfTen(d, precision);
 			sign = NumeralCharArrayBuffer.IntegerSign.POSITIVE;
 		}
 
@@ -61,7 +61,7 @@ final class DoubleCharArrayBuffer {
 
 		if (absRaised - precisionMult >= 0.5d) { ++precisionMult; }
 
-		final long divisor = Log3rUtils.getLongPowerOfTen(precision);
+		final long divisor = Log3rUtil.getLongPowerOfTen(precision);
 		fractionalBuffer.appendLong(precisionMult % divisor);
 		wholeBuffer.appendLong((precisionMult / divisor), sign);
 	}

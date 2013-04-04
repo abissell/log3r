@@ -46,12 +46,12 @@ public class CharArrayLog3rMessageTest {
 		int masterLength = 0;
 
 		int randomSubArrayIdx = 0;
-		final CharArrayLogMessage baseMessage = getRandomLogMessage(5, randomSubArrayIdx);
+		final CharArrayMessage baseMessage = getRandomLogMessage(5, randomSubArrayIdx);
 		randomSubArrayIdx += 5;
 		System.arraycopy(baseMessage.array(), 0, masterArray, masterLength, baseMessage.msgLength());
 		masterLength += baseMessage.msgLength();
 
-		final CharArrayLogMessage appendedMessage = getRandomLogMessage(5, randomSubArrayIdx);
+		final CharArrayMessage appendedMessage = getRandomLogMessage(5, randomSubArrayIdx);
 		System.arraycopy(appendedMessage.array(), 0, masterArray, masterLength, appendedMessage.msgLength());
 		masterLength += appendedMessage.msgLength();
 
@@ -65,7 +65,7 @@ public class CharArrayLog3rMessageTest {
 	@Test
 	public void testAppendCharBlock() {
 		final char[] base = {'a', 'b', 'c'};
-		final CharArrayLogMessage message = new CharArrayLog3rMessage();
+		final CharArrayMessage message = new CharArrayLog3rMessage();
 		message.append(base);
 		message.append(BasicCharBlock.TIMES);
 
@@ -76,7 +76,7 @@ public class CharArrayLog3rMessageTest {
 	@Test
 	public void testAppendChar() {
 		final char[] base = {'a', 'b'};
-		final CharArrayLogMessage message = new CharArrayLog3rMessage();
+		final CharArrayMessage message = new CharArrayLog3rMessage();
 		message.append('c');
 
 		final char[] target = {'c'};
@@ -89,7 +89,7 @@ public class CharArrayLog3rMessageTest {
 		int masterLength = 0;
 
 		int randomSubArrayIdx = 0;
-		final CharArrayLogMessage baseMessage = getRandomLogMessage(5, randomSubArrayIdx);
+		final CharArrayMessage baseMessage = getRandomLogMessage(5, randomSubArrayIdx);
 		randomSubArrayIdx += 5;
 		masterLength += copyMessageRangeToMasterArray(baseMessage, 0, masterArray, masterLength);
 
@@ -117,7 +117,7 @@ public class CharArrayLog3rMessageTest {
 
 	@Test
 	public void testAppendCharBuffer() {
-		final CharArrayLogMessage message = new CharArrayLog3rMessage();
+		final CharArrayMessage message = new CharArrayLog3rMessage();
 		message.append('a').append('b').append('c');
 		final CharBuffer buffer = BasicCharBlock.TIMES.buffer();
 		System.out.println(buffer.toString());
@@ -136,7 +136,7 @@ public class CharArrayLog3rMessageTest {
 		final char[] masterArray = new char[5000];
 		int masterLength = 0;
 
-		final CharArrayLogMessage message = getRandomLogMessage(5, 0);
+		final CharArrayMessage message = getRandomLogMessage(5, 0);
 		masterLength += copyMessageRangeToMasterArray(message, 0, masterArray, masterLength);
 
 		masterLength += appendToLogMessageAndMasterArray(0, message, masterArray, masterLength);
@@ -157,7 +157,7 @@ public class CharArrayLog3rMessageTest {
 		final char[] masterArray = new char[5000];
 		int masterLength = 0;
 
-		final CharArrayLogMessage message = getRandomLogMessage(5, 0);
+		final CharArrayMessage message = getRandomLogMessage(5, 0);
 		masterLength += copyMessageRangeToMasterArray(message, 0, masterArray, masterLength);
 
 		masterLength += appendToLogMessageAndMasterArray(0.12345, -1, message, masterArray, masterLength);
@@ -199,7 +199,7 @@ public class CharArrayLog3rMessageTest {
 
 	private static void testAppendMillisecondTimestamp(final DateLibrary library, final Calendar c, final ReadWritableDateTime dateTime) {
 		final long currentTimeMs = System.currentTimeMillis();
-		final CharArrayLogMessage message;
+		final CharArrayMessage message;
 		c.setTimeInMillis(currentTimeMs);
 		if (library == DateLibrary.JDK) {
 			message = new CharArrayLog3rMessage();
@@ -270,8 +270,8 @@ public class CharArrayLog3rMessageTest {
 		JODA
 	}
 
-	private static CharArrayLogMessage getRandomLogMessage(final int numSubArrays, final int subArraysStartIdx) {
-		final CharArrayLogMessage randomMsg = new CharArrayLog3rMessage();
+	private static CharArrayMessage getRandomLogMessage(final int numSubArrays, final int subArraysStartIdx) {
+		final CharArrayMessage randomMsg = new CharArrayLog3rMessage();
 		for (int i = subArraysStartIdx; i < (subArraysStartIdx + numSubArrays); i++) {
 			final char[] randomSubArray = (char[]) RANDOM_SUBARRAYS[i];
 			randomMsg.append(randomSubArray);
@@ -280,29 +280,29 @@ public class CharArrayLog3rMessageTest {
 		return randomMsg;
 	}
 
-	private char[] getMessageSubArray(final CharArrayLogMessage message) {
+	private char[] getMessageSubArray(final CharArrayMessage message) {
 		return Arrays.copyOfRange(message.array(), 0, message.msgLength());
 	}
 
-	private int copyMessageRangeToMasterArray(final CharArrayLogMessage message, final int startPos, final char[] masterArray, final int masterLength) {
+	private int copyMessageRangeToMasterArray(final CharArrayMessage message, final int startPos, final char[] masterArray, final int masterLength) {
 		final int copyLength = message.msgLength() - startPos;
 		System.arraycopy(message.array(), startPos, masterArray, masterLength, copyLength);
 		return copyLength;
 	}
 
-	private int appendToLogMessageAndMasterArray(final int i, final CharArrayLogMessage message, final char[] masterArray, final int masterLength) {
+	private int appendToLogMessageAndMasterArray(final int i, final CharArrayMessage message, final char[] masterArray, final int masterLength) {
 		message.append(i);
 		final char[] intChars = Integer.toString(i).toCharArray();
 		return appendSubArrayToMasterArray(intChars, masterArray, masterLength);
 	}
 
-	private int appendToLogMessageAndMasterArray(final long el, final CharArrayLogMessage message, final char[] masterArray, final int masterLength) {
+	private int appendToLogMessageAndMasterArray(final long el, final CharArrayMessage message, final char[] masterArray, final int masterLength) {
 		message.append(el);
 		final char[] longChars = Long.toString(el).toCharArray();
 		return appendSubArrayToMasterArray(longChars, masterArray, masterLength);
 	}
 
-	private int appendToLogMessageAndMasterArray(final double d, final int precision, final CharArrayLogMessage message, final char[] masterArray, final int masterLength) {
+	private int appendToLogMessageAndMasterArray(final double d, final int precision, final CharArrayMessage message, final char[] masterArray, final int masterLength) {
 		if (precision == -1)
 			message.append(d);
 		else

@@ -2,11 +2,11 @@ package main.java.arclightes.log3r;
 
 // Not Thread Safe
 abstract class BaseLogMessage implements LogMessage {
-	char[] array;
+	final char[] array;
 	int msgLength;
 
 	BaseLogMessage() {
-		array = new char[Log3rSettings.getInstance().getLog3rMaxMessageLengthChars()];
+		array = new char[Log3rDefaultContext.getInstance().getMaxMessageLengthChars()];
 	}
 
 	public final char[] array() {

@@ -24,7 +24,8 @@ public class TestJodaChronVsGregorianCalendar extends AbstractBenchmark {
 	private static final long[] RANDOM_TIMES = new long[TESTS_PER_ITER];
 	static {
 		final long currentTimeMs = System.currentTimeMillis();
-		final long intervalToSelect = 1000L * 60L * 60L * 3L; // select random times from past 3 hours
+		final long intervalToSelect = System.currentTimeMillis();
+		// final long intervalToSelect = 1000L * 60L * 60L * 3L; // select random times from past 3 hours
 		for (int i = 0; i < TESTS_PER_ITER; i++) {
 
 			final long randomLong = TestUtils.randomLong(intervalToSelect);

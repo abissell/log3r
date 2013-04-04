@@ -15,7 +15,7 @@ public class BaseLogMessageTest {
 	public void test() {
 		final BaseLogMessage testMessage = new CharArrayLog3rMessage();
 
-		((CharArrayLogMessage) testMessage).append(RANDOM_CHARS);
+		((CharArrayMessage) testMessage).append(RANDOM_CHARS);
 
 		final char[] testMessageArray = testMessage.array();
 		for (int i = 0; i < TEST_LENGTH; i++) {

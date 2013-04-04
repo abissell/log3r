@@ -70,7 +70,7 @@ public class TestNumeralBuffersPerformance extends AbstractBenchmark {
 		for (int i = 0; i < NUM_ITER; i++) {
 			for (int j = 0; j < TESTS_PER_ITER; j++) {
 				try {
-					final double result = Log3rUtils.raiseToPowerOfTen(randomDoubles[j], randomInts[j]);
+					final double result = Log3rUtil.raiseToPowerOfTen(randomDoubles[j], randomInts[j]);
 					results[testIndex] = results[testIndex] + Double.doubleToLongBits(result);
 				} catch (Exception e) {
 					System.err.println(e.getMessage());

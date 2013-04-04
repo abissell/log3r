@@ -3,13 +3,16 @@ package main.java.arclightes.log3r;
 import com.lmax.disruptor.util.Util;
 
 @SuppressWarnings("FinalStaticMethod")
-enum Log3rUtils {
+enum Log3rUtil {
 	@SuppressWarnings("UnusedDeclaration") INSTANCE; // Enum singleton
+
+	private static final String DEFAULT_CONTEXT_NAME = "default";
 
 	private static final int CHAR_ZERO = 48;
 	private static final long CHAR_ZERO_LONG = 48L;
 
-	private static final double[] DOUBLE_POWERS_OF_TEN = new double[15];
+	private static final int MAXIMUM_PRECISION = 16;
+	private static final double[] DOUBLE_POWERS_OF_TEN = new double[MAXIMUM_PRECISION];
 	static {
 		DOUBLE_POWERS_OF_TEN[0]  = 1.0d;
 		DOUBLE_POWERS_OF_TEN[1]  = 10.0d;
@@ -25,9 +28,10 @@ enum Log3rUtils {
 		DOUBLE_POWERS_OF_TEN[11] = 100000000000.0d;
 		DOUBLE_POWERS_OF_TEN[12] = 1000000000000.0d;
 		DOUBLE_POWERS_OF_TEN[13] = 10000000000000.0d;
-		DOUBLE_POWERS_OF_TEN[14] = 100000000000000.0d;	
+		DOUBLE_POWERS_OF_TEN[14] = 100000000000000.0d;
+		DOUBLE_POWERS_OF_TEN[15] = 1000000000000000.0d;
 	}
-	private static final long[] LONG_POWERS_OF_TEN = new long[15];
+	private static final long[] LONG_POWERS_OF_TEN = new long[16];
 	static {
 		LONG_POWERS_OF_TEN[0]  = 1L;
 		LONG_POWERS_OF_TEN[1]  = 10L;
@@ -44,6 +48,11 @@ enum Log3rUtils {
 		LONG_POWERS_OF_TEN[12] = 1000000000000L;
 		LONG_POWERS_OF_TEN[13] = 10000000000000L;
 		LONG_POWERS_OF_TEN[14] = 100000000000000L;
+		LONG_POWERS_OF_TEN[15] = 1000000000000000L;
+	}
+
+	static final String getDefaultContextName() {
+		return DEFAULT_CONTEXT_NAME;
 	}
 
 	static final double raiseToPowerOfTen(final double val, final int power) {
@@ -66,9 +75,19 @@ enum Log3rUtils {
 		return (char) (el + CHAR_ZERO_LONG);
 	}
 
+	public static int getMaximumPrecision() {
+		return MAXIMUM_PRECISION;
+	}
+
 	static final void charArrayToByteArray(final int length, final char[] charArr, final byte[] byteArr)  {
 		for (int i = 0; i < length; i++) {
 			byteArr[i] = (byte)charArr[i];
+		}
+	}
+
+	static final void charArrayToByteArray(final int length, final char[] charArr, final byte[] byteArr, final int byteArrDest) {
+		for (int i = 0, j = byteArrDest; i < length; i++, j++) {
+			byteArr[j] = (byte)charArr[i];
 		}
 	}
 

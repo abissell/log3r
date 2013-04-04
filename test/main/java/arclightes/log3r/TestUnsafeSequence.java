@@ -8,11 +8,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLongArray;
 
 public class TestUnsafeSequence {
-	private static final long INITIAL_CURSOR_VALUE = -1L;
 	private static final int NUM_THREADS = 4;
-	private final Sequence cursor = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
-	private final int sequencesToTest = 100;
-	private final AtomicLongArray sequencesSeen = new AtomicLongArray(sequencesToTest);
+	private static final AtomicLongArray sequencesSeen = new AtomicLongArray(110);
+	static {
+		for (int i = 0; i < sequencesSeen.length(); i++) {
+			sequencesSeen.getAndSet(i, Sequencer.INITIAL_CURSOR_VALUE);
+		}
+	}
+	private static final Sequence cursor = new Sequence(Sequencer.INITIAL_CURSOR_VALUE);
+	private static final int sequencesToTest = 100;
 
 	public TestUnsafeSequence() {
 
@@ -30,9 +34,10 @@ public class TestUnsafeSequence {
 		startSignal.countDown();
 	}
 
-	class LatchedWorker implements Runnable {
+	private static class LatchedWorker implements Runnable {
 		private final CountDownLatch startSignal;
 		private final int threadId;
+		private final StringBuilder buf = new StringBuilder();
 
 		LatchedWorker(CountDownLatch startSignal, int threadId) {
 			this.startSignal = startSignal;
@@ -42,15 +47,23 @@ public class TestUnsafeSequence {
 			try {
 				startSignal.await();
 				doWork();
-			} catch (InterruptedException ex) {} // return;
+			} catch (InterruptedException ex) {
+				// Do nothing
+			} // return;
 		}
 
 		void doWork() {
 			long sequence = 0L;
+			buf.append("THREAD ").append(threadId).append(":");
 			while (sequence < sequencesToTest) {
 				sequence = cursor.incrementAndGet();
-				System.out.print(sequence + "-" + threadId + ", ");
+				buf.append(sequence).append(", ");
+				final long priorSequence = sequencesSeen.getAndSet((int) sequence, sequence);
+				if (priorSequence != Sequencer.INITIAL_CURSOR_VALUE)
+					throw new RuntimeException("" + priorSequence);
 			}
+			System.out.println(buf);
+			System.out.println("Exited work thread with sequence = " + sequence);
 		}
 	}
 }

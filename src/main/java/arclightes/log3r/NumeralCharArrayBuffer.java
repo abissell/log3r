@@ -51,7 +51,7 @@ final class NumeralCharArrayBuffer {
 
 		int idx = capacity - 1;
 		do {
-			buffer[idx--] = Log3rUtils.getChar(i % 10);
+			buffer[idx--] = Log3rUtil.getChar(i % 10);
 			i /= 10;
 		} while (i > 0);
 
@@ -87,7 +87,7 @@ final class NumeralCharArrayBuffer {
 	int copyUnsignedDigits(int i, final IntegerSign sign) {
 		int idx = capacity - 1;
 		do {
-			buffer[idx--] = Log3rUtils.getChar(i % 10);
+			buffer[idx--] = Log3rUtil.getChar(i % 10);
 			i /= 10;
 		} while (i > 0);
 
@@ -121,7 +121,7 @@ final class NumeralCharArrayBuffer {
 	int copyUnsignedDigits(long el, final IntegerSign sign) {
 		int idx = capacity - 1;
 		do {
-			buffer[idx--] = Log3rUtils.getChar(el % 10L);
+			buffer[idx--] = Log3rUtil.getChar(el % 10L);
 			el /= 10L;
 		} while (el > 0L);
 

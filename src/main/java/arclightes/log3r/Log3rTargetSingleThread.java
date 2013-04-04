@@ -8,20 +8,20 @@ import java.io.OutputStream;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public enum Log3rTarget implements LogTarget {
+public enum Log3rTargetSingleThread implements LogTarget {
 	DEFAULT("default");
 
-	private static final Logger log = Logger.getLogger(Log3rTarget.class);
+	private static final Logger log = Logger.getLogger(Log3rTargetSingleThread.class);
 
-	private static final int MAX_FILE_LENGTH = Log3rSettings.getInstance().getLog3rFileLengthMb();
+	private static final int MAX_FILE_LENGTH = Log3rDefaultContext.getInstance().getFileLengthMb();
 
-	/* Guarded by "fileLock" */ private OutputStream outputStream;
+	private OutputStream outputStream;
 	private int logIdx;
 	private int bytesWritten = 0;
 	private final String logFile;
 	private final Lock fileLock = new ReentrantLock();
 
-	private Log3rTarget(final String logFile) {
+	private Log3rTargetSingleThread(final String logFile) {
 		this.logFile = "perf.log.file" + logFile;
 	}
 

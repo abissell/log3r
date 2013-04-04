@@ -1,5 +1,5 @@
 package main.java.arclightes.log3r;
 
-interface LogMessageType {
+public interface LogMessageType {
 	LogMessage getNextMessage();
 }
