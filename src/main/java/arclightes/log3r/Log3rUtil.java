@@ -8,9 +8,6 @@ enum Log3rUtil {
 
 	private static final String DEFAULT_CONTEXT_NAME = "default";
 
-	private static final int CHAR_ZERO = 48;
-	private static final long CHAR_ZERO_LONG = 48L;
-
 	private static final int MAXIMUM_PRECISION = 16;
 	private static final double[] DOUBLE_POWERS_OF_TEN = new double[MAXIMUM_PRECISION];
 	static {
@@ -63,29 +60,22 @@ enum Log3rUtil {
 		return LONG_POWERS_OF_TEN[power];
 	}
 
-    public static int getInt(char i) {
-        return i - CHAR_ZERO;
-    }
-
-    public static char getChar(int i) {
-        return (char) (i + CHAR_ZERO);
-    }
-
-	public static char getChar(long el) {
-		return (char) (el + CHAR_ZERO_LONG);
-	}
-
-	public static int getMaximumPrecision() {
+	static final int getMaximumPrecision() {
 		return MAXIMUM_PRECISION;
 	}
 
-	static final void charArrayToByteArray(final int length, final char[] charArr, final byte[] byteArr)  {
+	static final void charArrayToByteArray(final int length,
+										   final char[] charArr,
+										   final byte[] byteArr)  {
 		for (int i = 0; i < length; i++) {
 			byteArr[i] = (byte)charArr[i];
 		}
 	}
 
-	static final void charArrayToByteArray(final int length, final char[] charArr, final byte[] byteArr, final int byteArrDest) {
+	static final void charArrayToByteArray(final int length,
+										   final char[] charArr,
+										   final byte[] byteArr,
+										   final int byteArrDest) {
 		for (int i = 0, j = byteArrDest; i < length; i++, j++) {
 			byteArr[j] = (byte)charArr[i];
 		}

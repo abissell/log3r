@@ -70,7 +70,7 @@ public class TestLog3rUtilsPerformance extends AbstractBenchmark {
 	public void testCharIntConversion() {
 		for (int i = 0; i < NUM_ITER; i++) {
 			for (int j = 0; j < TESTS_PER_ITER; j++) {
-				final int convertedInt = Log3rUtil.getInt(RANDOM_CHARS[j]);
+				final int convertedInt = RANDOM_CHARS[j] - '0';
 				RESULT_1 += convertedInt;
 			}
 		}
@@ -109,42 +109,6 @@ public class TestLog3rUtilsPerformance extends AbstractBenchmark {
 				return 9;
 			default:
 				return 0;
-		}
-	}
-
-	// @Test
-	public void testIntCharConversion() {
-		for (int i = 0; i < NUM_ITER; i++) {
-			for (int j = 0; j < TESTS_PER_ITER; j++) {
-				final char convertedChar = Log3rUtil.getChar(RANDOM_INTS[j]);
-				RESULT_1 += convertedChar;
-			}
-		}
-	}
-
-	// @Test
-	public void testSwitchingIntCharConversion() {
-		for (int i = 0; i < NUM_ITER; i++) {
-			for (int j = 0; j < TESTS_PER_ITER; j++) {
-				final char convertedChar = getCharSwitch(RANDOM_INTS[j]);
-				RESULT_1 += convertedChar;
-			}
-		}
-	}
-
-	// @Test
-	public void testDecimalPlaceCalcFloorEquality() {
-		for (int i = 0; i < NUM_ITER; i++) {
-			for (int j = 0; j < TESTS_PER_ITER; j++) {
-				int decimalPlace = 0;
-				double tmp = RANDOM_DOUBLES[j];
-				while (Math.floor(tmp) != tmp)
-				{
-					decimalPlace++;
-					tmp *= 10;
-				}
-				RESULT_1 += decimalPlace;
-			}
 		}
 	}
 

@@ -60,7 +60,6 @@ public final class Log3r {
     }
 
     public final void log(final SequencedLogMessage message) {
-		final long sequence = message.getSequence();
-		msgBuffer.publish(sequence);
+		msgBuffer.publish(message.getSequence());
     }
 }

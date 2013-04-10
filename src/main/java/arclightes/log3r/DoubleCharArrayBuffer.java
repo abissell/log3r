@@ -1,34 +1,31 @@
 package main.java.arclightes.log3r;
 
 // Not Thread Safe
-final class DoubleCharArrayBuffer {
+final class DoubleCharArrayBuffer implements FlushableDoubleCharAppender {
 	private static final int DEFAULT_PRECISION = Log3rDefaultContext.getInstance().getFloatingPointPrecisionDefault();
-	private static final char[] NaN_CHARS = Double.toString(Double.NaN).toCharArray();
-	private static final char[] POS_INFINITY_CHARS = Double.toString(Double.POSITIVE_INFINITY).toCharArray();
-	private static final char[] NEG_INFINITY_CHARS = Double.toString(Double.NEGATIVE_INFINITY).toCharArray();
-	private static final char DECIMAL_POINT = '.';
-	private final NumeralCharArrayBuffer wholeBuffer = new NumeralCharArrayBuffer();
-	private final NumeralCharArrayBuffer fractionalBuffer = new NumeralCharArrayBuffer(Log3rUtil.getMaximumPrecision());
+	private final NumeralCharArrayBuffer wholeBuffer;
+	private final NumeralCharArrayBuffer fractionalBuffer;
 
     DoubleCharArrayBuffer() {
-
+		wholeBuffer = new NumeralCharArrayBuffer();
+		fractionalBuffer = new NumeralCharArrayBuffer(Log3rUtil.getMaximumPrecision());
 	}
 
-	void appendDouble(final double d) {
+	public final void appendDouble(final double d) {
 		appendDouble(d, DEFAULT_PRECISION);
 	}
 
-	void appendDouble(final double d, final int precision) {
-		if (Double.isNaN(d)) {
-			wholeBuffer.appendChars(NaN_CHARS);
+	public final void appendDouble(final double d, final int precision) {
+		if (d != d) {
+			wholeBuffer.appendChars(CharConsts.NaN);
 			return;
 		}
 
 		if (Double.isInfinite(d)) {
 			if (d > 0.0d) {
-				wholeBuffer.appendChars(POS_INFINITY_CHARS);
+				wholeBuffer.appendChars(CharConsts.POS_INFINITY);
 			} else {
-				wholeBuffer.appendChars(NEG_INFINITY_CHARS);
+				wholeBuffer.appendChars(CharConsts.NEG_INFINITY);
 			}
 			return;
 		}
@@ -44,7 +41,7 @@ final class DoubleCharArrayBuffer {
 		appendNonInfiniteOrZeroDouble(d, precision);
 	}
 
-	void appendNonInfiniteOrZeroDouble(final double d, int precision) {
+	private void appendNonInfiniteOrZeroDouble(final double d, int precision) {
 		final double absRaised;
 		final NumeralCharArrayBuffer.IntegerSign sign;
 		if (d < 0.0d) {
@@ -66,19 +63,11 @@ final class DoubleCharArrayBuffer {
 		wholeBuffer.appendLong((precisionMult / divisor), sign);
 	}
 
-    int copyToDestArrayAndReset(final char[] destArray, int destPos) {
+    public final int flush(final char[] destArray, int destPos) {
         final int startDestPos = destPos;
-
-		if (wholeBuffer.getLength() > 0) {
-			destPos += wholeBuffer.copyToDestArrayAndReset(destArray, destPos);
-		}
-
-		destArray[destPos++] = DECIMAL_POINT; // Always append decimal point even if there's nothing in fractional buffer
-
-		if (fractionalBuffer.getLength() > 0) {
-			destPos += fractionalBuffer.copyToDestArrayAndReset(destArray, destPos);
-		}
-
+		destPos += wholeBuffer.flush(destArray, destPos);
+		destArray[destPos++] = CharConsts.DECIMAL_POINT; // Always append decimal point even if there's nothing in fractional buffer
+		destPos += fractionalBuffer.flush(destArray, destPos);
         return destPos - startDestPos;
     }
 

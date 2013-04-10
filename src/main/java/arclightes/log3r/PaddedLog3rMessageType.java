@@ -13,8 +13,9 @@ enum PaddedLog3rMessageType implements PaddedLogMessageType {
 	private PaddedLog3rMessageType(int queueSize) {
 		if (! Log3rUtil.isPowerOfTwo(queueSize)) {
 			final int newQueueSize = Log3rUtil.ceilingNextPowerOfTwo(queueSize);
-			System.err.println("Tried to initialize main.java.arclightes.log3r.Log3rMessageType with queueSize=" + queueSize +
-					", resetting to next power of two =" + newQueueSize);
+			System.err.println("Tried to initialize main.java.arclightes.log3r.Log3rMessageType " +
+					" with queueSize=" + queueSize + ", resetting to next power of two =" +
+					newQueueSize);
 			queueSize = newQueueSize;
 		}
 

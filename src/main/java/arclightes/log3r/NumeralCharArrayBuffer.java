@@ -1,49 +1,49 @@
 package main.java.arclightes.log3r;
 
-final class NumeralCharArrayBuffer {
+final class NumeralCharArrayBuffer implements BulkNumeralCharAppender {
 	private static final int MAX_LENGTH = 64;
-	private static final char[] ZEROS_SOURCE_ARRAY = new char[MAX_LENGTH];
-	static {
-		for (int i = 0; i < MAX_LENGTH; i++)
-			ZEROS_SOURCE_ARRAY[i] = '0';
-	}
-	private static final char NEGATIVE_SIGN = '-';
+
 	private final char[] buffer;
 	private final int capacity;
-    private int length = 0;
+	private int length = 0;
 
     NumeralCharArrayBuffer() {
-		buffer = new char[MAX_LENGTH];
-		capacity = MAX_LENGTH;
+		this(MAX_LENGTH);
 	}
 
 	NumeralCharArrayBuffer(final int capacity) {
 		if (capacity > MAX_LENGTH)
 			throw new IllegalArgumentException("" + capacity);
 
-		buffer = new char[capacity];
+		this.buffer = new char[capacity];
 		this.capacity = capacity;
 	}
 
-    int getLength() {
-        return length;
-    }
-
-	void appendChar(final char c) {
+	public final NumeralCharArrayBuffer appendChar(char c) {
 		buffer[length++] = c;
+		return this;
 	}
 
-	void appendChars(final char[] srcArray) {
+	public final NumeralCharArrayBuffer appendChars(final char[] srcArray) {
 		System.arraycopy(srcArray, 0, buffer, length, srcArray.length);
 		length += srcArray.length;
+		return this;
+	}
+
+	public final NumeralCharArrayBuffer appendChars(final char[] srcArray,
+													final int srcPos,
+													final int lengthOfCopy) {
+		System.arraycopy(srcArray, srcPos, buffer, length, lengthOfCopy);
+		length += lengthOfCopy;
+		return this;
 	}
 
 	void bulkAppendZeros(final int numZeros) {
-		System.arraycopy(ZEROS_SOURCE_ARRAY, 0, buffer, length, numZeros);
+		System.arraycopy(CharConsts.ZEROS_SOURCE_ARRAY, 0, buffer, length, numZeros);
 		length += numZeros;
 	}
 
-	int appendZeroPaddedNonNegativeInt(int i, final int minLength) {
+	public final int appendZeroPaddedNonNegativeInt(int i, final int minLength) {
 		if (i == 0) {
 			bulkAppendZeros(minLength);
 			return minLength;
@@ -51,7 +51,7 @@ final class NumeralCharArrayBuffer {
 
 		int idx = capacity - 1;
 		do {
-			buffer[idx--] = Log3rUtil.getChar(i % 10);
+			buffer[idx--] = (char) ((i % 10) + '0');
 			i /= 10;
 		} while (i > 0);
 
@@ -70,7 +70,7 @@ final class NumeralCharArrayBuffer {
 	}
 
 	// Returns number of characters appended
-	int appendInt(int i) {
+	public final int appendInt(int i) {
 		if (i == 0) {
 			buffer[length++] = '0';
 			return 1;
@@ -87,7 +87,7 @@ final class NumeralCharArrayBuffer {
 	int copyUnsignedDigits(int i, final IntegerSign sign) {
 		int idx = capacity - 1;
 		do {
-			buffer[idx--] = Log3rUtil.getChar(i % 10);
+			buffer[idx--] = (char) ((i % 10) + '0');
 			i /= 10;
 		} while (i > 0);
 
@@ -95,7 +95,7 @@ final class NumeralCharArrayBuffer {
 		return moveBackAppendedUnsignedDigitsToFront(idx, sign);
 	}
 
-	int appendLong(long el) {
+	public final int appendLong(long el) {
 		if (el == 0L) {
 			buffer[length++] = '0';
 			return 1;
@@ -109,7 +109,7 @@ final class NumeralCharArrayBuffer {
 		}
 	}
 
-	int appendLong(long el, final IntegerSign sign) {
+	int appendLong(final long el, final IntegerSign sign) {
 		if (el == 0) {
 			buffer[length++] = '0';
 			return 1;
@@ -121,7 +121,7 @@ final class NumeralCharArrayBuffer {
 	int copyUnsignedDigits(long el, final IntegerSign sign) {
 		int idx = capacity - 1;
 		do {
-			buffer[idx--] = Log3rUtil.getChar(el % 10L);
+			buffer[idx--] = (char) ((el % 10L) + '0');
 			el /= 10L;
 		} while (el > 0L);
 
@@ -137,7 +137,7 @@ final class NumeralCharArrayBuffer {
 			return copyLength;
 		} else if (sign == IntegerSign.NEGATIVE) {
 			System.arraycopy(buffer, idx, buffer, length+1, copyLength);
-			buffer[length] = NEGATIVE_SIGN;
+			buffer[length] = CharConsts.NEGATIVE_SIGN;
 			length += (copyLength + 1);
 			return copyLength + 1;
 		} else {
@@ -150,13 +150,14 @@ final class NumeralCharArrayBuffer {
 		NEGATIVE
 	}
 
-	// Returns total length of characters copied to destArray
-	int copyToDestArrayAndReset(final char[] destArray, final int destPos) {
+	public final int flush(final char[] destArray, final int destPos) {
+		if (length <= 0) {
+			return length = 0;
+		}
+
 		final int lengthOfCopy = length;
-		length = 0;
-		if (lengthOfCopy <= 0)
-			return 0;
 		System.arraycopy(buffer, 0, destArray, destPos, lengthOfCopy);
+		length = 0;
 		return lengthOfCopy;
 	}
 

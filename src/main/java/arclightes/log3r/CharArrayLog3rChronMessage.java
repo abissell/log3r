@@ -1,22 +1,17 @@
 package main.java.arclightes.log3r;
 
 import org.apache.log4j.Logger;
-import org.joda.time.Chronology;
-import org.joda.time.MutableDateTime;
-import org.joda.time.ReadWritableDateTime;
-import org.joda.time.chrono.ISOChronology;
 
 import java.nio.CharBuffer;
 
 // Not Thread Safe
-final class JodaCharArrayLog3rMessage extends BaseLogMessage implements CharArrayMessage {
-    private static final Logger log = Logger.getLogger(JodaCharArrayLog3rMessage.class);
-	private static final Chronology CHRON = ISOChronology.getInstance();
+class CharArrayLog3rChronMessage extends BaseLogMessage implements CharArrayMessage {
+    private static final Logger log = Logger.getLogger(CharArrayLog3rChronMessage.class);
 	private final NumeralCharArrayBuffer integerBuffer = new NumeralCharArrayBuffer();
 	private final DoubleCharArrayBuffer doubleBuffer = new DoubleCharArrayBuffer();
-	private final ReadWritableDateTime dateTime = new MutableDateTime(CHRON);
+	private final TimestampCharAppender timestampAppender = new GregorianTimestampCharAppender(integerBuffer);
 
-    JodaCharArrayLog3rMessage() {
+    CharArrayLog3rChronMessage() {
 		super();
     }
 
@@ -132,22 +127,7 @@ final class JodaCharArrayLog3rMessage extends BaseLogMessage implements CharArra
 
 	public final CharArrayMessage appendMillisecondTimestamp(final long msTimestamp) {
 		try {
-			dateTime.setMillis(msTimestamp);
-
-			integerBuffer.appendInt(dateTime.getYear());
-			integerBuffer.appendChar('-');
-			integerBuffer.appendZeroPaddedNonNegativeInt(dateTime.getMonthOfYear(), 2);
-			integerBuffer.appendChar('-');
-			integerBuffer.appendZeroPaddedNonNegativeInt(dateTime.getDayOfMonth(), 2);
-			integerBuffer.appendChar(' ');
-			integerBuffer.appendZeroPaddedNonNegativeInt(dateTime.getHourOfDay(), 2);
-			integerBuffer.appendChar(':');
-			integerBuffer.appendZeroPaddedNonNegativeInt(dateTime.getMinuteOfHour(), 2);
-			integerBuffer.appendChar(':');
-			integerBuffer.appendZeroPaddedNonNegativeInt(dateTime.getSecondOfMinute(), 2);
-			integerBuffer.appendChar('.');
-			integerBuffer.appendZeroPaddedNonNegativeInt(dateTime.getMillisOfSecond(), 3);
-
+			timestampAppender.appendMillisecondTimestamp(msTimestamp);
 			msgLength += integerBuffer.flush(array, msgLength);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);

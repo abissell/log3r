@@ -12,7 +12,7 @@ public final class PaddedCharArrayLog3rMessage extends CharArrayLog3rMessage {
 		super();
 	}
 
-	public long sumPaddingToPreventOptimisation()
+	public final long sumPaddingToPreventOptimisation()
 	{
 		return p1 + p2 + p3 + p4 + p5 + p6;
 	}

@@ -19,7 +19,6 @@ public enum Log3rTargetSingleThread implements LogTarget {
 	private int logIdx;
 	private int bytesWritten = 0;
 	private final String logFile;
-	private final Lock fileLock = new ReentrantLock();
 
 	private Log3rTargetSingleThread(final String logFile) {
 		this.logFile = "perf.log.file" + logFile;
@@ -78,10 +77,10 @@ public enum Log3rTargetSingleThread implements LogTarget {
 	}
 
 	public final void lockLog() {
-		fileLock.lock();
+		throw new UnsupportedOperationException();
 	}
 
 	public final void unlockLog() {
-		fileLock.unlock();
+		throw new UnsupportedOperationException();
 	}
 }
