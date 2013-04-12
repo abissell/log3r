@@ -3,13 +3,13 @@ package main.java.arclightes.log3r;
 import org.apache.log4j.Logger;
 
 import java.nio.CharBuffer;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 // Not Thread Safe
-class CharArrayLog3rChronMessage extends BaseLogMessage implements CharArrayMessage {
+final class CharArrayLog3rChronMessage extends BaseLogMessage implements CharArrayMessage {
     private static final Logger log = Logger.getLogger(CharArrayLog3rChronMessage.class);
-	private final NumeralCharArrayBuffer integerBuffer = new NumeralCharArrayBuffer();
-	private final DoubleCharArrayBuffer doubleBuffer = new DoubleCharArrayBuffer();
-	private final TimestampCharAppender timestampAppender = new GregorianTimestampCharAppender(integerBuffer);
+	private final Calendar c = new GregorianCalendar();
 
     CharArrayLog3rChronMessage() {
 		super();
@@ -83,8 +83,7 @@ class CharArrayLog3rChronMessage extends BaseLogMessage implements CharArrayMess
 
 	public final CharArrayMessage append(final int i) {
 		try {
-			integerBuffer.appendInt(i);
-			msgLength += integerBuffer.flush(array, msgLength);
+			msgLength += JavaChronicleAppender.appendInt(i, array, msgLength);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -94,8 +93,7 @@ class CharArrayLog3rChronMessage extends BaseLogMessage implements CharArrayMess
 
 	public final CharArrayMessage append(final long el) {
 		try {
-			integerBuffer.appendLong(el);
-			msgLength += integerBuffer.flush(array, msgLength);
+			msgLength += JavaChronicleAppender.appendLong(el, array, msgLength);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -105,8 +103,7 @@ class CharArrayLog3rChronMessage extends BaseLogMessage implements CharArrayMess
 
 	public final CharArrayMessage append(final double d) {
 		try {
-			doubleBuffer.appendDouble(d);
-			msgLength += doubleBuffer.flush(array, msgLength);
+			msgLength += JavaChronicleAppender.appendDouble(d, array, msgLength);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -116,8 +113,7 @@ class CharArrayLog3rChronMessage extends BaseLogMessage implements CharArrayMess
 
 	public final CharArrayMessage append(final double d, final int precision) {
 		try {
-			doubleBuffer.appendDouble(d, precision);
-			msgLength += doubleBuffer.flush(array, msgLength);
+			msgLength += JavaChronicleAppender.appendDouble(d, precision, array, msgLength);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -127,8 +123,29 @@ class CharArrayLog3rChronMessage extends BaseLogMessage implements CharArrayMess
 
 	public final CharArrayMessage appendMillisecondTimestamp(final long msTimestamp) {
 		try {
-			timestampAppender.appendMillisecondTimestamp(msTimestamp);
-			msgLength += integerBuffer.flush(array, msgLength);
+			c.setTimeInMillis(msTimestamp);
+
+			msgLength += JavaChronicleAppender.appendInt(c.get(Calendar.YEAR), array, msgLength);
+			array[msgLength++] = '-';
+			msgLength += JavaChronicleAppender.appendZeroPaddedNonNegativeInt(
+					c.get(Calendar.MONTH) + 1, 2, array, msgLength);
+			array[msgLength++] = '-';
+			msgLength += JavaChronicleAppender.appendZeroPaddedNonNegativeInt(
+					c.get(Calendar.DAY_OF_MONTH), 2, array, msgLength);
+			array[msgLength++] = ' ';
+			msgLength += JavaChronicleAppender.appendZeroPaddedNonNegativeInt(
+					c.get(Calendar.HOUR_OF_DAY), 2, array, msgLength);
+			array[msgLength++] = ':';
+			msgLength += JavaChronicleAppender.appendZeroPaddedNonNegativeInt(
+					c.get(Calendar.MINUTE), 2, array, msgLength);
+			array[msgLength++] = ':';
+			msgLength += JavaChronicleAppender.appendZeroPaddedNonNegativeInt(
+					c.get(Calendar.SECOND), 2, array, msgLength);
+			array[msgLength++] = '.';
+			msgLength += JavaChronicleAppender.appendZeroPaddedNonNegativeInt(
+					c.get(Calendar.MILLISECOND), 3, array, msgLength);
+
+			return this;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

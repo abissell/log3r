@@ -11,24 +11,14 @@ final class GregorianTimestampCharAppender implements TimestampCharAppender {
 		this.numeralAppender = numeralAppender;	
 	}
 	
-	public final GregorianTimestampCharAppender appendMillisecondTimestamp(final long msTimestamp) {
+	public final int appendMillisecondTimestamp(final long msTimestamp,
+												final char[] destArray,
+												int destPos) {
 
 		c.setTimeInMillis(msTimestamp);
-		
-		numeralAppender.appendInt(c.get(Calendar.YEAR));
-		numeralAppender.appendChar('-');
-		numeralAppender.appendZeroPaddedNonNegativeInt(c.get(Calendar.MONTH) + 1, 2);
-		numeralAppender.appendChar('-');
-		numeralAppender.appendZeroPaddedNonNegativeInt(c.get(Calendar.DAY_OF_MONTH), 2);
-		numeralAppender.appendChar(' ');
-		numeralAppender.appendZeroPaddedNonNegativeInt(c.get(Calendar.HOUR_OF_DAY), 2);
-		numeralAppender.appendChar(':');
-		numeralAppender.appendZeroPaddedNonNegativeInt(c.get(Calendar.MINUTE), 2);
-		numeralAppender.appendChar(':');
-		numeralAppender.appendZeroPaddedNonNegativeInt(c.get(Calendar.SECOND), 2);
-		numeralAppender.appendChar('.');
-		numeralAppender.appendZeroPaddedNonNegativeInt(c.get(Calendar.MILLISECOND), 3);
 
-		return this;
+		Log3rUtil.appendTimestamp(c, numeralAppender);
+
+		return numeralAppender.flush(destArray, destPos);
 	}
 }

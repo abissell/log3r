@@ -10,8 +10,15 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class CharArrayLog3rMessageTest {
+public class CharArrayMessageTest {
 	private static final int TEST_LENGTH = 400;
+	private static final LogMessageType CHRON_TYPE = new LogMessageType() {
+		@Override
+		public LogMessage getNextMessage() {
+			return new CharArrayLog3rChronMessage();
+		}
+	};
+	private static final LogMessageType TYPE = CHRON_TYPE;
 	private static final char[] RANDOM_CHARS = TestUtils.getRandomCharArray(TEST_LENGTH);
 	private static final Object[] RANDOM_SUBARRAYS;
 	static {
@@ -36,7 +43,7 @@ public class CharArrayLog3rMessageTest {
 		RANDOM_SUBARRAYS = subArrays;
 	}
 
-	public CharArrayLog3rMessageTest() {
+	public CharArrayMessageTest() {
 
 	}
 
@@ -327,5 +334,15 @@ public class CharArrayLog3rMessageTest {
 		}
 
 		return pos - startPos;
+	}
+
+	private CharArrayMessage getNewMessage() {
+		if (TYPE == Log3rMessageType.ARRAY) {
+			return new CharArrayLog3rMessage();
+		} else if (TYPE == CHRON_TYPE) {
+			return new CharArrayLog3rChronMessage();
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 }

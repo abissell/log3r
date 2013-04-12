@@ -42,7 +42,7 @@ enum JavaChronicleAppender {
 			// integer and faction
 			if (shift < 53) {
 				final long intValue = mantissa >> shift;
-				idx += appendLong0(intValue, array, idx);
+				idx += appendNonNegativeLong(intValue, array, idx);
 				mantissa -= intValue << shift;
 				if (mantissa > 0) {
 					array[idx++] = '.';
@@ -130,7 +130,7 @@ enum JavaChronicleAppender {
 		}
 		final long val2 = precision > 0 ? mantissa << precision : mantissa >>> -precision;
 
-		idx += appendLong0(val2, array, idx);
+		idx += appendNonNegativeLong(val2, array, idx);
 		if (digits >= 2) {
 			bulkAppendZeros(digits, array, idx);
 			idx += digits;
@@ -166,7 +166,7 @@ enum JavaChronicleAppender {
 		if (precision > 0)
 			destPos += appendDouble0(val, precision, destArray, destPos);
 		else
-			destPos += appendLong0(val, destArray, destPos);
+			destPos += appendNonNegativeLong(val, destArray, destPos);
 
 		return destPos - startPos;
 	}
@@ -192,7 +192,20 @@ enum JavaChronicleAppender {
 		return destPos - startPos;
 	}
 
-	static int appendLong0(final long num, final char[] destArray, int destPos) {
+	static int appendLong(long num, final char[] destArray, int destPos) {
+		if (num < 0L) {
+			num *= -1L;
+			destArray[destPos++] = '-';
+			return 1 + appendNonNegativeLong(num, destArray, destPos);
+		} else if (num > 0L) {
+			return appendNonNegativeLong(num, destArray, destPos);
+		} else {
+			destArray[destPos] = '0';
+			return 1;
+		}
+	}
+
+	static int appendNonNegativeLong(final long num, final char[] destArray, int destPos) {
 		// find the number of digits
 		long power10 = power10(num);
 		// starting from the end, write each digit
@@ -207,9 +220,48 @@ enum JavaChronicleAppender {
 		return destPos - startPos;
 	}
 
-	static int appendInt(final int num, final char[] destArray, int destPos) {
+	static int appendInt(int num, final char[] destArray, int destPos) {
+		if (num < 0) {
+			num *= -1;
+			destArray[destPos++] = '-';
+			return 1 + appendNonNegativeInt(num, power10int(num), destArray, destPos);
+		} else if (num > 0) {
+			return appendNonNegativeInt(num, power10int(num), destArray, destPos);
+		} else {
+			destArray[destPos] = '0';
+			return 1;
+		}
+	}
+
+	static int appendZeroPaddedNonNegativeInt(int num,
+											  final int minLength,
+											  final char[] destArray,
+											  int destPos) {
+		if (num == 0) {
+			bulkAppendZeros(minLength, destArray, destPos);
+			return minLength;
+		}
+
+		final int power10idx = Arrays.binarySearch(TENS_INTS, num);
+		int numZerosToAdd;
+		if (power10idx >= 0) { // Found multiple of 10
+			numZerosToAdd = minLength - power10idx - 1;
+		} else {
+			numZerosToAdd = minLength - (-1*power10idx) + 1;
+		}
+
+		for (; numZerosToAdd > 0; --numZerosToAdd) {
+			destArray[destPos++] = '0';
+		}
+
+		return appendNonNegativeInt(num, power10intFromIdx(power10idx), destArray, destPos);
+	}
+
+	static int appendNonNegativeInt(final int num,
+									int power10,
+									final char[] destArray,
+									int destPos) {
 		// find the number of digits
-		int power10 = power10int(num);
 		// starting from the end, write each digit
 		final int startPos = destPos;
 		while (power10 > 0) {
@@ -296,6 +348,10 @@ enum JavaChronicleAppender {
 
 	private static int power10int(final int i) {
 		int idx = Arrays.binarySearch(TENS_INTS, i);
+		return idx >= 0 ? TENS_INTS[idx] : TENS_INTS[~idx - 1];
+	}
+
+	private static int power10intFromIdx(final int idx) {
 		return idx >= 0 ? TENS_INTS[idx] : TENS_INTS[~idx - 1];
 	}
 

@@ -2,6 +2,8 @@ package main.java.arclightes.log3r;
 
 import com.lmax.disruptor.util.Util;
 
+import java.util.Calendar;
+
 @SuppressWarnings("FinalStaticMethod")
 enum Log3rUtil {
 	@SuppressWarnings("UnusedDeclaration") INSTANCE; // Enum singleton
@@ -81,6 +83,31 @@ enum Log3rUtil {
 		}
 	}
 
+	static void appendTimestamp(final Calendar c, final BulkNumeralCharAppender appender) {
+		appendTimestamp(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
+						c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND),
+						c.get(Calendar.MILLISECOND), appender);
+	}
+
+	static void appendTimestamp(final int year, final int month, final int day, final int hourOfDay,
+								final int minute, final int second, final int millisecond,
+								final BulkNumeralCharAppender appender) {
+
+		appender.appendInt(year);
+		appender.appendChar('-');
+		appender.appendZeroPaddedNonNegativeInt(month, 2);
+		appender.appendChar('-');
+		appender.appendZeroPaddedNonNegativeInt(day, 2);
+		appender.appendChar(' ');
+		appender.appendZeroPaddedNonNegativeInt(hourOfDay, 2);
+		appender.appendChar(':');
+		appender.appendZeroPaddedNonNegativeInt(minute, 2);
+		appender.appendChar(':');
+		appender.appendZeroPaddedNonNegativeInt(second, 2);
+		appender.appendChar('.');
+		appender.appendZeroPaddedNonNegativeInt(millisecond, 3);
+	}
+
 	static final boolean isPowerOfTwo(final int positiveInt) {
 		return Integer.bitCount(positiveInt) == 1;
 	}
@@ -88,7 +115,7 @@ enum Log3rUtil {
 	static final int ceilingNextPowerOfTwo(final int x) {
 		return Util.ceilingNextPowerOfTwo(x);
 	}
-
+	
 	// Extensible enum example function
 //	public final <U extends Enum<U> & main.java.arclightes.log3r.CharBlock> void appendAllBlocks(Class<U> blockType) {
 //		for (main.java.arclightes.log3r.CharBlock block : blockType.getEnumConstants()) {

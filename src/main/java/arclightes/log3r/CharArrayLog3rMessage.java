@@ -127,8 +127,7 @@ class CharArrayLog3rMessage extends BaseLogMessage implements CharArrayMessage {
 
 	public final CharArrayMessage appendMillisecondTimestamp(final long msTimestamp) {
 		try {
-			timestampAppender.appendMillisecondTimestamp(msTimestamp);
-			msgLength += integerBuffer.flush(array, msgLength);
+			msgLength += timestampAppender.appendMillisecondTimestamp(msTimestamp, array, msgLength);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}

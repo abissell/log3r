@@ -25,6 +25,10 @@ enum TestUtils {
 		return javaRandom.nextDouble();
 	}
 
+	public static final double randomDouble(final int n) {
+		return javaRandom.nextDouble() % ((double) n);
+	}
+
 	public static final char[] getRandomCharArray(final int length) {
 		final char[] newArray = new char[length];
 		for (int i = 0; i < length; ++i) {
